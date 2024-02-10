@@ -1,3 +1,4 @@
+import { Exclude } from "class-transformer";
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
@@ -8,9 +9,12 @@ export class Superadmin {
   @Column()
   name: string;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   email: string;
 
+  @Exclude()
   @Column()
   password: string;
 }

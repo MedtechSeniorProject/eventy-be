@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { dataSource } from "./database/database-source";
 import { createExpressServer } from "routing-controllers";
 import { SuperAdminController } from "./modules/superadmin/superadmin.controller";
+import { AuthController } from "./modules/auth/auth.controller";
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ dataSource
 const port = process.env.PORT || 3001;
 
 const app = createExpressServer({
-  controllers: [SuperAdminController], // we specify controllers we want to use
+  controllers: [SuperAdminController,AuthController], // we specify controllers we want to use
 });
 
 app.get("/", (req: Request, res: Response) => {

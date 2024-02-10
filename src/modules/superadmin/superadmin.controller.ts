@@ -8,10 +8,13 @@ import {
   Param,
   Patch,
   Post,
+  UseBefore,
 } from "routing-controllers";
 import { CreateSuperAdminDto } from "./dto/create-superadmin.dto";
 import { UpdateSuperAdminDto } from "./dto/update-superadmin.dto";
+import { CheckAutheticated } from "../auth/jwt.middleware";
 
+@UseBefore(CheckAutheticated)
 @JsonController("/superadmins")
 export class SuperAdminController {
   @Get("/")
