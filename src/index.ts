@@ -4,6 +4,8 @@ import { dataSource } from "./database/database-source";
 import { createExpressServer } from "routing-controllers";
 import { SuperAdminController } from "./modules/superadmin/superadmin.controller";
 import { AuthController } from "./modules/auth/auth.controller";
+import { DeskAgentController } from "./modules/deskagent/deskagent.controller";
+import { EventManagerController } from "./modules/eventmanager/eventmanager.controller";
 
 dotenv.config();
 
@@ -19,7 +21,7 @@ dataSource
 const port = process.env.PORT || 3001;
 
 const app = createExpressServer({
-  controllers: [SuperAdminController,AuthController], // we specify controllers we want to use
+  controllers: [SuperAdminController, EventManagerController, DeskAgentController, AuthController], // we specify controllers we want to use
 });
 
 app.get("/", (req: Request, res: Response) => {
