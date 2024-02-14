@@ -11,7 +11,6 @@ import {
 } from "routing-controllers";
 import { CreateEventManagerDto } from "./dto/create-eventmanager.dto";
 import { UpdateEventManagerDto } from "./dto/update-eventmanager.dto";
-import { EventManager } from "./eventmanager.entity";
 
 
 @JsonController("/eventmanager") // TODO: Compare this with the @Controller() decorator from SuperAdminController
