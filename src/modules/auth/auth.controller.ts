@@ -29,6 +29,12 @@ export class AuthController {
     return authService.validateLogin(validateDto, ipAddress, userAgent);
   }
 
+  @Post("/resend")
+  resendValidation(@Body() validateDto: ValidateDto) {
+    return authService.resendValidationCode(validateDto.email);
+  }
+
+
   @Post("/extend")
   extendSession(@Body() extendDto: ExtendDto) {
     return authService.extendSession(extendDto.sessionKey);
