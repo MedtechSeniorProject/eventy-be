@@ -1,4 +1,3 @@
-import { Exclude } from "class-transformer";
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
@@ -15,7 +14,6 @@ export class EventManager {
   @Column({ select: false })
   password: string;
 
-  @Exclude()
   @Column({
     default: "",
     nullable: true,
