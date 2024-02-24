@@ -7,6 +7,17 @@ import { SuperAdminController } from "./modules/superadmin/superadmin.controller
 import { AuthController } from "./modules/auth/auth.controller";
 import { DeskAgentController } from "./modules/deskagent/deskagent.controller";
 import { EventManagerController } from "./modules/eventmanager/eventmanager.controller";
+import { Middleware, ExpressMiddlewareInterface } from "routing-controllers";
+
+@Middleware({ type: "before" })
+export class CorsMiddleware implements ExpressMiddlewareInterface {
+  use(request: any, response: any, next: (err?: any) => any): any {
+    response.setHeader("Access-Control-Allow-Origin", "*");
+    response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    next();
+  }
+}
 
 dotenv.config();
 
@@ -28,7 +39,8 @@ const app = createExpressServer({
     EventManagerController,
     DeskAgentController,
     AuthController,
-  ], // we specify controllers we want to use
+  ],
+  middlewares: [CorsMiddleware],
 });
 
 app.get("/", (req: Request, res: Response) => {
