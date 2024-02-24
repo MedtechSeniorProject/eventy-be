@@ -32,7 +32,7 @@ const app = createExpressServer({
 });
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
+  res.send("Eventy BE Server");
 });
 
 app.listen(port, () => {
