@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import dotenv from 'dotenv'; 
+import dotenv from "dotenv";
 import { dataSource } from "./database/database-source";
+import { seedDatabase } from "./database/database-seeding";
 import { createExpressServer } from "routing-controllers";
 import { SuperAdminController } from "./modules/superadmin/superadmin.controller";
 import { AuthController } from "./modules/auth/auth.controller";
@@ -13,6 +14,7 @@ dataSource
   .initialize()
   .then(() => {
     console.log("Connection to database has been established successfully.");
+    seedDatabase();
   })
   .catch((err) => {
     console.error("Error during database connection:", err);
@@ -21,7 +23,12 @@ dataSource
 const port = process.env.PORT || 3001;
 
 const app = createExpressServer({
-  controllers: [SuperAdminController, EventManagerController, DeskAgentController, AuthController], // we specify controllers we want to use
+  controllers: [
+    SuperAdminController,
+    EventManagerController,
+    DeskAgentController,
+    AuthController,
+  ], // we specify controllers we want to use
 });
 
 app.get("/", (req: Request, res: Response) => {

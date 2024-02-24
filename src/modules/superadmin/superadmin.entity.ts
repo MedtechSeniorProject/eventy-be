@@ -14,7 +14,6 @@ export class Superadmin {
   })
   email: string;
 
-  @Exclude()
-  @Column()
+  @Column({ select: false })
   password: string;
 }

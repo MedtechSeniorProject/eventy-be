@@ -12,12 +12,11 @@ import {
 import { CreateEventManagerDto } from "./dto/create-eventmanager.dto";
 import { UpdateEventManagerDto } from "./dto/update-eventmanager.dto";
 
-
-@JsonController("/eventmanager") // TODO: Compare this with the @Controller() decorator from SuperAdminController
+@JsonController("/eventmanagers")
 export class EventManagerController {
   @Get("/")
   getEventManagers() {
-    return EventManagerService.getEventManager();
+    return EventManagerService.getEventManagers();
   }
 
   @Get("/:id")
@@ -31,7 +30,10 @@ export class EventManagerController {
   }
 
   @Patch("/:id")
-  updateEventManager(@Param("id") id: string, @Body() eventManager: UpdateEventManagerDto) {
+  updateEventManager(
+    @Param("id") id: string,
+    @Body() eventManager: UpdateEventManagerDto
+  ) {
     return EventManagerService.updateEventManager(id, eventManager);
   }
 

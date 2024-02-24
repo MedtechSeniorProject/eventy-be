@@ -20,14 +20,23 @@ class SuperadminService {
       return new BadRequestError("Email already in use");
     }
     const passwordHash = await bcrypt.hash(superadmin.password, 10);
-    return await this.superadminRepository.save({
-      ...superadmin,
-      password: passwordHash,
-    });
+    const { password: createdPassword, ...createdSuperadmin } =
+      await this.superadminRepository.save({
+        ...superadmin,
+        password: passwordHash,
+      });
+    return createdSuperadmin;
   }
 
   public async updateSuperAdmin(id: string, superadmin: UpdateSuperAdminDto) {
-    return await this.superadminRepository.update(id, superadmin);
+    if (superadmin.password) {
+      const passwordHash = await bcrypt.hash(superadmin.password, 10);
+      await this.superadminRepository.update(id, {
+        ...superadmin,
+        password: passwordHash,
+      });
+    } else await this.superadminRepository.update(id, superadmin);
+    return await this.getSuperAdminById(id);
   }
 
   public async deleteSuperAdmin(id: string) {
@@ -53,4 +62,4 @@ class SuperadminService {
   }
 }
 
-export default new SuperadminService();
+export default new SuperadminService() as SuperadminService;

@@ -33,5 +33,4 @@ class DeskAgentService {
   }
 }
 
-export default new DeskAgentService();
-
+export default new DeskAgentService() as DeskAgentService;
