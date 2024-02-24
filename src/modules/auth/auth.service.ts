@@ -64,9 +64,10 @@ class AuthService {
       sessionKey,
       userId: superadmin.id,
     });
+    const { password, ...superadminWithoutPassword } = superadmin;
     return {
       accessToken,
-      superadmin,
+      superadminWithoutPassword,
     };
   }
 
