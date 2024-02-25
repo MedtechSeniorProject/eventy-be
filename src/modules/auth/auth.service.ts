@@ -67,7 +67,7 @@ class AuthService {
     const { password, ...superadminWithoutPassword } = superadmin;
     return {
       accessToken,
-      superadminWithoutPassword,
+      superadmin: superadminWithoutPassword,
     };
   }
 
