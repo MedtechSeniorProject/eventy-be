@@ -1,4 +1,4 @@
-import { BadRequestError } from "routing-controllers";
+import { UnauthorizedError } from "routing-controllers";
 import * as bcrypt from "bcrypt";
 import superadminService from "../superadmin/superadmin.service";
 import eventmanagerService from "../eventmanager/eventmanager.service";
@@ -23,14 +23,14 @@ class AuthService {
           loginCredentials.email
         );
       if (!eventmanager) {
-        return new BadRequestError("Invalid email or password");
+        throw new UnauthorizedError("Invalid email or password");
       }
       const passwordMatch = await bcrypt.compare(
         loginCredentials.password,
         eventmanager.password
       );
       if (!passwordMatch) {
-        return new BadRequestError("Invalid email or password");
+        throw new UnauthorizedError("Invalid email or password");
       }
       // if valid, create a random validation code and email it to user
       // const validationCode = Math.random().toString(36).substring(2, 15);
@@ -53,7 +53,7 @@ class AuthService {
       superadmin.password
     );
     if (!passwordMatch) {
-      return new BadRequestError("Invalid email or password");
+      throw new UnauthorizedError("Invalid email or password");
     }
     const sessionKey = await sessionService.createSession(
       superadmin.id,
@@ -81,10 +81,10 @@ class AuthService {
       email
     );
     if (!eventManager) {
-      return new BadRequestError("Invalid code");
+      throw new UnauthorizedError("Invalid code");
     }
     if (eventManager.validationCode !== validationCode) {
-      return new BadRequestError("Invalid code");
+      throw new UnauthorizedError("Invalid code");
     }
     eventManager.validationCode = "";
     await eventmanagerService.updateEventManager(eventManager.id, eventManager);
@@ -112,7 +112,7 @@ class AuthService {
       email
     );
     if (!eventManager || eventManager.validationCode == "") {
-      return new BadRequestError("Invalid email");
+      throw new UnauthorizedError("Invalid email");
     }
     // const validationCode = Math.random().toString(36).substring(2, 15);
     const validationCode = "123456";
