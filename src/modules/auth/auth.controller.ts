@@ -10,6 +10,7 @@ import { LoginDto } from "./dto/login.dto";
 import authService from "./auth.service";
 import { ValidateDto } from "./dto/validate.dto";
 import { ExtendDto } from "./dto/extend.dto";
+import { ResendDto } from "./dto/resend.dto";
 
 @JsonController("/auth")
 export class AuthController {
@@ -30,10 +31,9 @@ export class AuthController {
   }
 
   @Post("/resend")
-  resendValidation(@Body() validateDto: ValidateDto) {
-    return authService.resendValidationCode(validateDto.email);
+  resendValidation(@Body() resendDto: ResendDto) {
+    return authService.resendValidationCode(resendDto.email);
   }
-
 
   @Post("/extend")
   extendSession(@Body() extendDto: ExtendDto) {
