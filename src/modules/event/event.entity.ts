@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { EventManager } from "../eventmanager/eventmanager.entity";
 
 @Entity()
@@ -28,6 +28,5 @@ export class Event {
   attendees: object[];
 
   @ManyToOne(() => EventManager, (eventManager) => eventManager.events)
-    eventManager: EventManager;
-
+  eventManager: EventManager;
 }

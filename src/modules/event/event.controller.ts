@@ -20,11 +20,29 @@ export class EventController {
         return EventService.getEvents();
     }
 
+    @Get("/withEventManagers")
+    // @UseBefore(CheckAutheticated)
+    getEventsWithEventManagers(){
+        return EventService.getEventsWithEventManagers();
+    }
+
+    @Get("/archived")
+    // @UseBefore(CheckAutheticated)
+    getArchivedEvents(){
+        return EventService.getArchivedEvents();
+    }
+    
+    @Get("/upcoming")
+    // @UseBefore(CheckAutheticated)
+    getUpcomingEvents(){
+        return EventService.getUpcomingEvents();
+    }
+
     @Post("/")
     @UseBefore(CheckAutheticated)
     createEvent(@Body() event: any, @Req() request: any) {
         event.eventManager = request.user.userId;
-        console.log("printing event:" + event);
         return EventService.createEvent(event);
     }
+
 }
