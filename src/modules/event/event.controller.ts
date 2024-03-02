@@ -46,9 +46,15 @@ export class EventController {
     }
 
     @Patch("/toggleArchive/:id")
-    // @UseBefore(CheckAutheticated)
+    @UseBefore(CheckAutheticated)
     toggleArchiveEvent(@Param("id") id: string) {
         return EventService.toggleArchiveEvent(id);
+    }
+
+    @Get("/attendees/:id")
+    // @UseBefore(CheckAutheticated)
+    getAttendees(@Param("id") id: string) {
+        return EventService.getAttendeesById(id);
     }
 
 

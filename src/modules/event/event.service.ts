@@ -59,6 +59,16 @@ class EventService {
     }
   }
 
+  public async getAttendeesById(id: string) {
+    const event = await this.eventRepository.findOne({ where: { id: id }, select: ["attendees"] });
+    if (event !== null) {
+      return event.attendees;
+    }
+    else {
+      throw new BadRequestError("Event not found");
+    }
+  }
+
 }
 
 export default new EventService() as EventService;
