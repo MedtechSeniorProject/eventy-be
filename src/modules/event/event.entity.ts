@@ -27,6 +27,7 @@ export class Event {
   })
   attendees: object[];
 
+
   @ManyToOne(() => EventManager, (eventManager) => eventManager.events)
     eventManager: EventManager;
 

@@ -20,7 +20,4 @@ export class EventManager {
     nullable: true,
   })
   validationCode: string;
-
-  @ManyToOne(() => Event, (event) => event.eventManager)
-  events: Event[]
 }
