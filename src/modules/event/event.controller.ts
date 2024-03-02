@@ -4,13 +4,13 @@ import {
     Body,
     Get,
     JsonController,
+    Param,
+    Patch,
     Post,
     Req,
     UseBefore,
 } from "routing-controllers";
 import { CheckAutheticated } from "../auth/jwt.middleware";
-// ... existing imports
-// ... existing imports
 
 @JsonController("/events")
 export class EventController {
@@ -44,5 +44,12 @@ export class EventController {
         event.eventManager = request.user.userId;
         return EventService.createEvent(event);
     }
+
+    @Patch("/toggleArchive/:id")
+    // @UseBefore(CheckAutheticated)
+    toggleArchiveEvent(@Param("id") id: string) {
+        return EventService.toggleArchiveEvent(id);
+    }
+
 
 }

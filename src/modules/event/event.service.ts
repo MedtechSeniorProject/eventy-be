@@ -1,10 +1,8 @@
-import { UnauthorizedError } from "routing-controllers";
+import { BadRequestError, UnauthorizedError } from "routing-controllers";
 import { dataSource } from "../../database/database-source";
 import eventmanagerService from "../eventmanager/eventmanager.service";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { Event } from "./event.entity";
-import { IsNull } from "typeorm";
-
 class EventService {
 
   public eventRepository = dataSource.getRepository(Event);
@@ -19,7 +17,7 @@ class EventService {
       select: ["id", "name", "time", "isArchived"]
     });
   }
-  
+
   getArchivedEvents() {
     return this.eventRepository.find({
       where: { isArchived: true },
@@ -27,7 +25,7 @@ class EventService {
       select: ["id", "name", "time"]
     });
   }
-  
+
   getUpcomingEvents() {
     return this.eventRepository.find({
       where: { isArchived: false },
@@ -48,6 +46,17 @@ class EventService {
       newEvent.eventManager = eventCreator;
     }
     return await this.eventRepository.save(newEvent);
+  }
+
+  public async toggleArchiveEvent(id: string) {
+    const event = await this.eventRepository.findOne({ where: { id: id } });
+    if (event !== null) {
+      event.isArchived = !event.isArchived;
+      return this.eventRepository.save(event);
+    }
+    else {
+      throw new BadRequestError("Event not found");
+    }
   }
 
 }
