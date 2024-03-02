@@ -52,7 +52,7 @@ export class EventController {
     }
 
     @Get("/attendees/:id")
-    // @UseBefore(CheckAutheticated)
+    @UseBefore(CheckAutheticated)
     getAttendees(@Param("id") id: string) {
         return EventService.getAttendeesById(id);
     }
