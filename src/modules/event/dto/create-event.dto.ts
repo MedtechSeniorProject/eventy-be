@@ -7,6 +7,11 @@ export class CreateEventDto {
 
   @IsNotEmpty()
   @IsDateString()
-  time: Date;
+  readonly time: Date;
+
+  @IsNotEmpty()
+  @IsString()
+  eventManager: string;
+
 
 }

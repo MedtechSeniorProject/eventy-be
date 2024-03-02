@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { Event } from "../event/event.entity";
 
 @Entity()
@@ -21,6 +21,7 @@ export class EventManager {
   })
   validationCode: string;
 
-  @ManyToOne(() => Event, (event) => event.eventManager)
-  events: Event[]
+  @OneToMany(() => Event, (event) => event.eventManager)
+  events: Event[];
+  
 }

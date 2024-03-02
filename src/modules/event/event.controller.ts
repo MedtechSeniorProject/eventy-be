@@ -2,27 +2,29 @@ import "reflect-metadata";
 import EventService from "./event.service";
 import {
     Body,
-    Delete,
     Get,
     JsonController,
-    Param,
-    Patch,
     Post,
+    Req,
+    UseBefore,
 } from "routing-controllers";
-import { CreateEventDto } from "./dto/create-event.dto";
-import { log } from "console";
+import { CheckAutheticated } from "../auth/jwt.middleware";
+// ... existing imports
+// ... existing imports
 
 @JsonController("/events")
 export class EventController {
     @Get("/")
-    getEvents() {
+    // @UseBefore(CheckAutheticated)
+    getEvents(){
         return EventService.getEvents();
     }
 
-
     @Post("/")
-    createEvent(@Body() event: CreateEventDto) {
+    @UseBefore(CheckAutheticated)
+    createEvent(@Body() event: any, @Req() request: any) {
+        event.eventManager = request.user.userId;
+        console.log("printing event:" + event);
         return EventService.createEvent(event);
     }
-
 }
