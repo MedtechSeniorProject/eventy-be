@@ -34,13 +34,13 @@ class EventService {
     });
   }
 
-  public async createEvent(event: CreateEventDto) {
+  public async createEvent(event: CreateEventDto, userId: string) {
     const newEvent = new Event();
     newEvent.name = event.name;
     newEvent.time = event.time;
-    let eventCreator = await eventmanagerService.getEventManagerById(event.eventManager);
+    let eventCreator = await eventmanagerService.getEventManagerById(userId);
     if (eventCreator === null) {
-      throw new UnauthorizedError("User not found");
+      throw new UnauthorizedError("Event Manager not found");
     }
     else {
       newEvent.eventManager = eventCreator;

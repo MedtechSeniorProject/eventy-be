@@ -11,6 +11,7 @@ import {
     UseBefore,
 } from "routing-controllers";
 import { CheckAutheticated } from "../auth/jwt.middleware";
+import { CreateEventDto } from "./dto/create-event.dto";
 
 @JsonController("/events")
 export class EventController {
@@ -40,9 +41,8 @@ export class EventController {
 
     @Post("/")
     @UseBefore(CheckAutheticated)
-    createEvent(@Body() event: any, @Req() request: any) {
-        event.eventManager = request.user.userId;
-        return EventService.createEvent(event);
+    createEvent(@Body() event: CreateEventDto, @Req() request: any) {
+        return EventService.createEvent(event, request.user.userId);
     }
 
     @Patch("/toggleArchive/:id")

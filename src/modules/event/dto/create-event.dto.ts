@@ -9,9 +9,4 @@ export class CreateEventDto {
   @IsDateString()
   readonly time: Date;
 
-  @IsNotEmpty()
-  @IsString()
-  eventManager: string;
-
-
 }
