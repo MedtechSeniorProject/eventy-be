@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { EventManager } from "../eventmanager/eventmanager.entity";
+import { Attendee } from "./Attendee";
 
 @Entity()
 export class Event {
@@ -21,11 +22,10 @@ export class Event {
   isArchived: boolean;
   
   @Column({
-    type: "json",
-    array: true,
-    default: []
+    type: "jsonb",
+    default: [],
   })
-  attendees: object[];
+  attendees: Attendee[];
 
   @ManyToOne(() => EventManager, (eventManager) => eventManager.events)
   eventManager: EventManager;
