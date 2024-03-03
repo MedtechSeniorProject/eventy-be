@@ -18,31 +18,31 @@ import { AddSingleAttendeeDto } from "./dto/add-single-attendee.dto";
 @JsonController("/events")
 export class EventController {
     @Get("/")
-    // @UseBefore(CheckAutheticated)
+    @UseBefore(CheckAutheticated)
     getEvents() {
         return EventService.getEvents();
     }
 
     @Get("/:id")
-    // @UseBefore(CheckAutheticated)
+    @UseBefore(CheckAutheticated)
     getEventById(@Param("id") id: string) {
         return EventService.getEventById(id);
     }
 
     @Get("/withEventManagers")
-    // @UseBefore(CheckAutheticated)
+    @UseBefore(CheckAutheticated)
     getEventsWithEventManagers() {
         return EventService.getEventsWithEventManagers();
     }
 
     @Get("/archived")
-    // @UseBefore(CheckAutheticated)
+    @UseBefore(CheckAutheticated)
     getArchivedEvents() {
         return EventService.getArchivedEvents();
     }
 
     @Get("/upcoming")
-    // @UseBefore(CheckAutheticated)
+    @UseBefore(CheckAutheticated)
     getUpcomingEvents() {
         return EventService.getUpcomingEvents();
     }
