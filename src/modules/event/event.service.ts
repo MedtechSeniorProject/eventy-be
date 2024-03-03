@@ -20,17 +20,27 @@ class EventService {
     });
   }
 
-  getArchivedEvents() {
+  public async getArchivedEvents(userId: string) {
+    const authenticatedUser = await eventmanagerService.getEventManagerById(userId);
+      if (authenticatedUser === null) {
+        throw new UnauthorizedError("Cannot find event manager.");
+      }
+
     return this.eventRepository.find({
-      where: { isArchived: true },
+      where: { eventManager: authenticatedUser, isArchived: true },
       relations: ["eventManager"],
       select: ["id", "name", "time"]
     });
   }
 
-  getUpcomingEvents() {
+  public async getUpcomingEvents(userId: string) {
+    const authenticatedUser = await eventmanagerService.getEventManagerById(userId);
+      if (authenticatedUser === null) {
+        throw new UnauthorizedError("Cannot find event manager.");
+      }
+
     return this.eventRepository.find({
-      where: { isArchived: false },
+      where: { eventManager: authenticatedUser, isArchived: false },
       relations: ["eventManager"],
       select: ["id", "name", "time"]
     });
@@ -40,17 +50,17 @@ class EventService {
     return this.eventRepository.findOne({ where: { id: id } });
   }
 
-  public async getMyEvents(userId: any) {
-    const authenticatedUser = await eventmanagerService.getEventManagerById(userId);
-    if (authenticatedUser === null) {
-      throw new UnauthorizedError("Cannot find event manager.");
-    }
-    return this.eventRepository.find({
-      where: { eventManager: userId },
-      relations: ["eventManager"],
-      select: ["id", "name", "time", "isArchived",]
-    });
-}
+    public async getMyEvents(userId: string) {
+      const authenticatedUser = await eventmanagerService.getEventManagerById(userId);
+      if (authenticatedUser === null) {
+        throw new UnauthorizedError("Cannot find event manager.");
+      }
+      return this.eventRepository.find({
+        where: { eventManager: authenticatedUser },
+        relations: ["eventManager"],
+        select: ["id", "name", "time", "isArchived",]
+      });
+  }
 
 
   public async createEvent(event: CreateEventDto, userId: string) {

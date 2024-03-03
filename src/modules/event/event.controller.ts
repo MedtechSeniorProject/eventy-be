@@ -14,6 +14,7 @@ import {
 import { CheckAutheticated } from "../auth/jwt.middleware";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { AddSingleAttendeeDto } from "./dto/add-single-attendee.dto";
+import { request } from "http";
 
 @JsonController("/events")
 export class EventController {
@@ -23,7 +24,7 @@ export class EventController {
         return EventService.getEvents();
     }
 
-    @Get("/:id")
+    @Get("/id/:id")
     @UseBefore(CheckAutheticated)
     getEventById(@Param("id") id: string) {
         return EventService.getEventById(id);
@@ -37,14 +38,14 @@ export class EventController {
 
     @Get("/archived")
     @UseBefore(CheckAutheticated)
-    getArchivedEvents() {
-        return EventService.getArchivedEvents();
+    getArchivedEvents(@Req() request: any) {
+        return EventService.getArchivedEvents(request.user.userId);
     }
 
     @Get("/upcoming")
     @UseBefore(CheckAutheticated)
-    getUpcomingEvents() {
-        return EventService.getUpcomingEvents();
+    getUpcomingEvents(@Req() request: any) {
+        return EventService.getUpcomingEvents(request.user.userId);
     }
 
     @Get("/myEvents")
