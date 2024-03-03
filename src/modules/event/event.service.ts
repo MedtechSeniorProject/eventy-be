@@ -48,7 +48,7 @@ class EventService {
     return this.eventRepository.find({
       where: { eventManager: userId },
       relations: ["eventManager"],
-      select: ["id", "name", "time", "isArchived", "attendees"]
+      select: ["id", "name", "time", "isArchived",]
     });
 }
 
