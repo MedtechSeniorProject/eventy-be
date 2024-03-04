@@ -5,6 +5,7 @@ import { CreateEventDto } from "./dto/create-event.dto";
 import { Event } from "./event.entity";
 import { AddSingleAttendeeDto } from "./dto/add-single-attendee.dto";
 import { Attendee } from "./Attendee";
+import { UpdateEventDto } from "./dto/update-event.dto";
 class EventService {
 
   public eventRepository = dataSource.getRepository(Event);
@@ -22,9 +23,9 @@ class EventService {
 
   public async getArchivedEvents(userId: string) {
     const authenticatedUser = await eventmanagerService.getEventManagerById(userId);
-      if (authenticatedUser === null) {
-        throw new UnauthorizedError("Cannot find event manager.");
-      }
+    if (authenticatedUser === null) {
+      throw new UnauthorizedError("Cannot find event manager.");
+    }
 
     return this.eventRepository.find({
       where: { eventManager: authenticatedUser, isArchived: true },
@@ -35,9 +36,9 @@ class EventService {
 
   public async getUpcomingEvents(userId: string) {
     const authenticatedUser = await eventmanagerService.getEventManagerById(userId);
-      if (authenticatedUser === null) {
-        throw new UnauthorizedError("Cannot find event manager.");
-      }
+    if (authenticatedUser === null) {
+      throw new UnauthorizedError("Cannot find event manager.");
+    }
 
     return this.eventRepository.find({
       where: { eventManager: authenticatedUser, isArchived: false },
@@ -50,16 +51,16 @@ class EventService {
     return this.eventRepository.findOne({ where: { id: id } });
   }
 
-    public async getMyEvents(userId: string) {
-      const authenticatedUser = await eventmanagerService.getEventManagerById(userId);
-      if (authenticatedUser === null) {
-        throw new UnauthorizedError("Cannot find event manager.");
-      }
-      return this.eventRepository.find({
-        where: { eventManager: authenticatedUser },
-        relations: ["eventManager"],
-        select: ["id", "name", "time", "isArchived",]
-      });
+  public async getMyEvents(userId: string) {
+    const authenticatedUser = await eventmanagerService.getEventManagerById(userId);
+    if (authenticatedUser === null) {
+      throw new UnauthorizedError("Cannot find event manager.");
+    }
+    return this.eventRepository.find({
+      where: { eventManager: authenticatedUser },
+      relations: ["eventManager"],
+      select: ["id", "name", "time", "isArchived",]
+    });
   }
 
 
@@ -75,6 +76,24 @@ class EventService {
       newEvent.eventManager = eventCreator;
     }
     return await this.eventRepository.save(newEvent);
+  }
+
+  public async updateEvent(id: string, event: UpdateEventDto) {
+    const eventToUpdate = await this.eventRepository.findOne({ where: { id: id } });
+
+    if (eventToUpdate === null) {
+      throw new BadRequestError("Event not found");
+    }
+
+    if (event.name !== undefined) {
+      eventToUpdate.name = event.name;
+    }
+
+    if (event.time !== undefined) {
+      eventToUpdate.time = event.time;
+    }
+
+    return await this.eventRepository.save(eventToUpdate);
   }
 
   public async toggleArchiveEvent(id: string) {
