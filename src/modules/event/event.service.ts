@@ -7,6 +7,25 @@ import { AddSingleAttendeeDto } from "./dto/add-single-attendee.dto";
 import { Attendee } from "./Attendee";
 import { UpdateEventDto } from "./dto/update-event.dto";
 class EventService {
+  public async addAttendees(id: string, attendees: AddSingleAttendeeDto[]) {
+    const event = await this.eventRepository.findOne({ where: { id: id } });
+    if (event !== null) {
+      attendees.forEach(attendee => {
+        const newAttendee = new Attendee(
+          attendee.name,
+          attendee.email,
+          true,
+          false,
+          attendee.phoneNumber
+        );
+        event.attendees.push(newAttendee);
+      });
+      return this.eventRepository.save(event);
+    }
+    else {
+      throw new BadRequestError("Event not found");
+    }
+  }
 
   public eventRepository = dataSource.getRepository(Event);
 
@@ -130,23 +149,6 @@ class EventService {
     }
   }
 
-  public async addSingleAttendee(id: string, attendee: AddSingleAttendeeDto) {
-    const event = await this.eventRepository.findOne({ where: { id: id } });
-    if (event !== null) {
-      const newAttendee = new Attendee(
-        attendee.name,
-        attendee.email,
-        true,
-        false,
-        attendee.phoneNumber
-      )
-      event.attendees.push(newAttendee);
-      return this.eventRepository.save(event);
-    } else {
-      throw new BadRequestError("Event not found");
-    }
-  }
-
   public async deleteAllAttendees(id: string) {
     const event = await this.eventRepository.findOne({ where: { id: id } });
     if (event !== null) {
@@ -158,18 +160,11 @@ class EventService {
     }
   }
 
-  public async deleteSingleAttendee(eventId: string, aattendeeId: string) {
+  public async deleteAttendees(eventId: string, aattendeeIds: string[]) {
     const event = await this.eventRepository.findOne({ where: { id: eventId } });
     if (event !== null) {
-      const prevLength = event.attendees.length;
-      event.attendees = event.attendees.filter(attendee => attendee.id !== aattendeeId);
-      this.eventRepository.save(event);
-      if (prevLength === event.attendees.length) {
-        throw new BadRequestError("Attendee not found");
-      }
-      else {
-        return event;
-      }
+      event.attendees = event.attendees.filter(attendee => !aattendeeIds.includes(attendee.id));
+      return this.eventRepository.save(event);
     }
     else {
       throw new BadRequestError("Event not found");

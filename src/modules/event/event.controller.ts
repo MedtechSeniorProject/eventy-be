@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import EventService from "./event.service";
 import {
+    BadRequestError,
     Body,
     Delete,
     Get,
@@ -14,7 +15,6 @@ import {
 import { CheckAutheticated } from "../auth/jwt.middleware";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { AddSingleAttendeeDto } from "./dto/add-single-attendee.dto";
-import { request } from "http";
 import { UpdateEventDto } from "./dto/update-event.dto";
 
 @JsonController("/events")
@@ -24,50 +24,25 @@ export class EventController {
     getEvents() {
         return EventService.getEvents();
     }
-
-    @Get("/id/:id")
-    getEventById(@Param("id") id: string) {
-        return EventService.getEventById(id);
-    }
-
+    
     @Get("/withEventManagers")
     getEventsWithEventManagers() {
         return EventService.getEventsWithEventManagers();
     }
-
+    
     @Get("/archived")
     getArchivedEvents(@Req() request: any) {
         return EventService.getArchivedEvents(request.user.userId);
     }
-
+    
     @Get("/upcoming")
     getUpcomingEvents(@Req() request: any) {
         return EventService.getUpcomingEvents(request.user.userId);
     }
-
+    
     @Get("/myEvents")
     getMyEvents(@Req() request: any) {
         return EventService.getMyEvents(request.user.userId);
-    }
-
-    @Post("/")
-    createEvent(@Body() event: CreateEventDto, @Req() request: any) {
-        return EventService.createEvent(event, request.user.userId);
-    }
-
-    @Patch("/:id")
-    updateEvent(@Param("id") id: string, @Body() event: UpdateEventDto) {
-        return EventService.updateEvent(id, event);
-    }
-
-    @Delete("/delete/:id")
-    deleteEvent(@Param("id") id: string) {
-        return EventService.deleteEvent(id);
-    }
-
-    @Patch("/toggleArchive/:id")
-    toggleArchiveEvent(@Param("id") id: string) {
-        return EventService.toggleArchiveEvent(id);
     }
 
     @Get("/attendees/:id")
@@ -75,20 +50,44 @@ export class EventController {
         return EventService.getAttendeesById(id);
     }
 
-    @Post("/addSingleAttendee/:id")
-    addSingleAttendee(@Param("id") id: string, @Body() attendee: AddSingleAttendeeDto) {
-        return EventService.addSingleAttendee(id, attendee);
+    @Get("/:id")
+    getEventById(@Param("id") id: string) {
+        return EventService.getEventById(id);
     }
 
-    @Delete("/deleteAllAttendees/:id")
+    @Patch("/toggleArchive/:id")
+    toggleArchiveEvent(@Param("id") id: string) {
+        return EventService.toggleArchiveEvent(id);
+    }
+
+    @Patch("/:id")
+    updateEvent(@Param("id") id: string, @Body() event: UpdateEventDto) {
+        return EventService.updateEvent(id, event);
+    }
+
+    @Post("/")
+    createEvent(@Body() event: CreateEventDto, @Req() request: any) {
+        return EventService.createEvent(event, request.user.userId);
+    }
+
+    @Post("/attendees/:id")
+    addAttendees(@Param("id") id: string, @Body() attendees: AddSingleAttendeeDto[]) {
+        return EventService.addAttendees(id, attendees);
+    }
+
+    @Post("/delete/:eventId/") //POST instead of DELETE because it is prefereable to use POST for delete requests with body
+    deleteAttendees(@Param("eventId") eventId: string, @Body() attendeeIds: string[]){
+        return EventService.deleteAttendees(eventId, attendeeIds);
+    }
+
+    @Delete("/deleteAttendeesList/:id") //For testing purposes
     deleteAllAttendees(@Param("id") id: string) {
         return EventService.deleteAllAttendees(id);
     }
 
-    @Delete("/deleteSingleAttendee/:eventId/:attendeeId")
-    deleteSingleAttendee(@Param("eventId") eventId: string, @Param("attendeeId") attendeeId: string){
-        return EventService.deleteSingleAttendee(eventId, attendeeId);
+    @Delete("/:id")
+    deleteEvent(@Param("id") id: string) {
+        return EventService.deleteEvent(id);
     }
-
 
 }
