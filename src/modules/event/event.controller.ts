@@ -60,6 +60,11 @@ export class EventController {
         return EventService.updateEvent(id, event);
     }
 
+    @Delete("/delete/:id")
+    deleteEvent(@Param("id") id: string) {
+        return EventService.deleteEvent(id);
+    }
+
     @Patch("/toggleArchive/:id")
     toggleArchiveEvent(@Param("id") id: string) {
         return EventService.toggleArchiveEvent(id);

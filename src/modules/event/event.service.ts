@@ -47,8 +47,12 @@ class EventService {
     });
   }
 
-  getEventById(id: string) {
-    return this.eventRepository.findOne({ where: { id: id } });
+  public async getEventById(id: string) {
+    const event = await this.eventRepository.findOne({ where: { id: id } });
+    if (event === null) {
+      throw new BadRequestError("Event not found");
+    }
+    return event;
   }
 
   public async getMyEvents(userId: string) {
@@ -94,6 +98,19 @@ class EventService {
     }
 
     return await this.eventRepository.save(eventToUpdate);
+  }
+
+  public async deleteEvent(id: string) {
+    const event = await this.eventRepository.findOne({ where: { id: id } });
+    if (event !== null) {
+      const deletedEvent = await this.eventRepository.remove(event);
+      if (deletedEvent) {
+        return "Event deleted successfully";
+      }
+    }
+    else {
+      throw new BadRequestError("Event not found");
+    }
   }
 
   public async toggleArchiveEvent(id: string) {
