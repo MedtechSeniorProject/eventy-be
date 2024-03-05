@@ -48,11 +48,7 @@ class EventService {
   }
 
   public async getEventById(id: string) {
-    const event = await this.eventRepository.findOne({ where: { id: id } });
-    if (event === null) {
-      throw new BadRequestError("Event not found");
-    }
-    return event;
+    return await this.eventRepository.findOne({ where: { id: id } });
   }
 
   public async getMyEvents(userId: string) {
