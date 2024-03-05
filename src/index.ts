@@ -13,7 +13,7 @@ import { Middleware, ExpressMiddlewareInterface } from "routing-controllers";
 export class CorsMiddleware implements ExpressMiddlewareInterface {
   use(request: any, response: any, next: (err?: any) => any): any {
     response.setHeader("Access-Control-Allow-Origin", "*");
-    response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    response.setHeader("Access-Control-Allow-Methods", "GET, PATCH, POST, PUT, DELETE");
     response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     next();
   }
