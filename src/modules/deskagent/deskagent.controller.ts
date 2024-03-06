@@ -14,7 +14,7 @@ import DeskAgentService from "./deskagent.service";
 
 
 
-@JsonController("/deskagent") // TODO: Compare this with the @Controller() decorator from SuperAdminController and EventManagerController
+@JsonController("/deskagents")
 export class DeskAgentController {
   @Get("/")
   getDeskAgents() {
