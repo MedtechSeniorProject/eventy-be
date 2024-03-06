@@ -13,9 +13,11 @@ import {
 import { CreateSuperAdminDto } from "./dto/create-superadmin.dto";
 import { UpdateSuperAdminDto } from "./dto/update-superadmin.dto";
 import { CheckAutheticated } from "../auth/jwt.middleware";
+import { CheckRole } from "../auth/role.middleware";
+import { ROLES } from "../auth/roles";
 
-@UseBefore(CheckAutheticated)
 @JsonController("/superadmin")
+@UseBefore(CheckAutheticated, CheckRole([ROLES.superadmin]))
 export class SuperAdminController {
   @Get("/")
   getSuperAdmins() {
@@ -33,7 +35,10 @@ export class SuperAdminController {
   }
 
   @Patch("/:id")
-  updateSuperAdmin(@Param("id") id: string, @Body() superAdmin: UpdateSuperAdminDto) {
+  updateSuperAdmin(
+    @Param("id") id: string,
+    @Body() superAdmin: UpdateSuperAdminDto
+  ) {
     return superadminService.updateSuperAdmin(id, superAdmin);
   }
 

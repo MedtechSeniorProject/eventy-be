@@ -7,6 +7,7 @@ import { LoginDto } from "./dto/login.dto";
 import { signToken } from "./jwt.util";
 import mailingService from "../mailing/mailing.service";
 import { ValidateDto } from "./dto/validate.dto";
+import { ROLES } from "./roles";
 
 class AuthService {
   public async login(
@@ -63,6 +64,7 @@ class AuthService {
     const accessToken = signToken({
       sessionKey,
       userId: superadmin.id,
+      role: ROLES.superadmin,
     });
     const { password, ...superadminWithoutPassword } = superadmin;
     return {
@@ -96,6 +98,7 @@ class AuthService {
     const accessToken = signToken({
       sessionKey,
       userId: eventManager.id,
+      role: ROLES.eventmanager,
     });
     return {
       accessToken,
