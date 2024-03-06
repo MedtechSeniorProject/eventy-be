@@ -17,8 +17,7 @@ import { CheckRole } from "../auth/role.middleware";
 import { ROLES } from "../auth/roles";
 
 
-@JsonController("/deskagent") // TODO: Compare this with the @Controller() decorator from SuperAdminController and EventManagerController
-@UseBefore(CheckAutheticated, CheckRole([ROLES.eventmanager]))
+@JsonController("/deskagents")
 export class DeskAgentController {
   @Get("/")
   getDeskAgents() {

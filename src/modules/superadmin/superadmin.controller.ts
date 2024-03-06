@@ -16,8 +16,8 @@ import { CheckAutheticated } from "../auth/jwt.middleware";
 import { CheckRole } from "../auth/role.middleware";
 import { ROLES } from "../auth/roles";
 
-@JsonController("/superadmin")
-@UseBefore(CheckAutheticated, CheckRole([ROLES.superadmin]))
+@UseBefore(CheckAutheticated)
+@JsonController("/superadmins")
 export class SuperAdminController {
   @Get("/")
   getSuperAdmins() {
