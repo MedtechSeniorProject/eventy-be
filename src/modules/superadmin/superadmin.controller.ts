@@ -15,7 +15,7 @@ import { UpdateSuperAdminDto } from "./dto/update-superadmin.dto";
 import { CheckAutheticated } from "../auth/jwt.middleware";
 
 @UseBefore(CheckAutheticated)
-@JsonController("/superadmin")
+@JsonController("/superadmins")
 export class SuperAdminController {
   @Get("/")
   getSuperAdmins() {

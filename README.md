@@ -39,7 +39,7 @@ Currently deployed at : http://162.19.25.174:4455/
         - code sent to email
 
 
-# Superadmin : /superadmin
+# Superadmin : /superadmins
 
 default : 
 
@@ -47,17 +47,17 @@ email : superadmin@superadmin.com
 
 pass : superadmin
 
-/superadmin POST : create superadmin
+/superadmins POST : create superadmin
 
-/superadmin GET : get all superadmins
+/superadmins GET : get all superadmins
 
-/superadmin/:id GET : get one superadmin
+/superadmins/:id GET : get one superadmin
 
-/superadmin/:id PATCH : update superadmin
+/superadmins/:id PATCH : update superadmin
 
-/superadmin/:id DELETE : delete superadmin
+/superadmins/:id DELETE : delete superadmin
 
-# Event Manager : /eventmanager
+# Event Manager : /eventmanagers
 
 default : 
 
