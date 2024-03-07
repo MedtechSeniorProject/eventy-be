@@ -56,6 +56,7 @@ class EventManagerService {
     return await this.eventManagerRepository
       .createQueryBuilder("eventmanager")
       .addSelect("eventmanager.password")
+      .addSelect("eventmanager.validationCode")
       .where("eventmanager.email = :email", { email })
       .getOne();
   }
