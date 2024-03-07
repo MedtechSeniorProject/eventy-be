@@ -18,6 +18,7 @@ import { ROLES } from "../auth/roles";
 
 
 @JsonController("/deskagents")
+@UseBefore(CheckAutheticated, CheckRole([ROLES.eventmanager]))
 export class DeskAgentController {
   @Get("/")
   getDeskAgents() {
