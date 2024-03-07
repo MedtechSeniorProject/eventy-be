@@ -70,10 +70,16 @@ export class EventController {
         return EventService.createEvent(event, request.user.userId);
     }
 
-    @Post("/attendees/:id")
+    @Post("/attendees/:id") //Will be used by event manager
     addAttendees(@Param("id") id: string, @Body() attendees: AddSingleAttendeeDto[]) {
         return EventService.addAttendees(id, attendees);
     }
+
+    @Post("/attendee/:eventId/") //Will be used by desk agent
+    addAttendee(@Param("eventId") eventId: string, @Body() attendee: AddSingleAttendeeDto) {
+        return EventService.addAttendee(eventId, attendee);
+    }
+
 
     @Post("/delete/:eventId/") //POST instead of DELETE because it is prefereable to use POST for delete requests with body
     deleteAttendees(@Param("eventId") eventId: string, @Body() attendeeIds: string[]){

@@ -7,6 +7,23 @@ import { AddSingleAttendeeDto } from "./dto/add-single-attendee.dto";
 import { Attendee } from "./Attendee";
 import { UpdateEventDto } from "./dto/update-event.dto";
 class EventService {
+  public async addAttendee(eventId: string, attendee: AddSingleAttendeeDto) {
+    const event = await this.eventRepository.findOne({ where: { id: eventId } });
+    if (event !== null) {
+      const newAttendee = new Attendee(
+        attendee.name,
+        attendee.email,
+        false,
+        true,
+        attendee.phoneNumber
+      );
+      event.attendees.push(newAttendee);
+      return this.eventRepository.save(event);
+    }
+    else {
+      throw new BadRequestError("Event not found");
+    }
+  }
   public async addAttendees(id: string, attendees: AddSingleAttendeeDto[]) {
     const event = await this.eventRepository.findOne({ where: { id: id } });
     if (event !== null) {
