@@ -7,6 +7,51 @@ import { AddSingleAttendeeDto } from "./dto/add-single-attendee.dto";
 import { Attendee } from "./Attendee";
 import { UpdateEventDto } from "./dto/update-event.dto";
 class EventService {
+  public eventRepository = dataSource.getRepository(Event);
+
+  public async checkInAttendee(eventId: string, attendeeId: string) {
+    const event = await this.eventRepository.findOne({ where: { id: eventId } });
+    if (event !== null) {
+      const attendee = event.attendees.find(attendee => attendee.id === attendeeId);
+      if (attendee !== undefined) {
+        if (attendee.hasAttended === false) {
+          attendee.hasAttended = true;
+          if (await this.eventRepository.save(event)) {
+            return attendee;
+          }
+        }
+        else {
+          throw new BadRequestError("Attendee already checked in");
+        }
+      }
+      else {
+        throw new BadRequestError("Attendee not found");
+      }
+    }
+    else {
+      throw new BadRequestError("Event not found");
+    }
+  }
+
+  public async addAttendee(eventId: string, attendee: AddSingleAttendeeDto) {
+    const event = await this.eventRepository.findOne({ where: { id: eventId } });
+    if (event !== null) {
+      const newAttendee = new Attendee(
+        attendee.name,
+        attendee.email,
+        false,
+        true,
+        attendee.phoneNumber
+      );
+      event.attendees.push(newAttendee);
+      if (await this.eventRepository.save(event)) {
+        return newAttendee;
+      }
+    }
+    else {
+      throw new BadRequestError("Event not found");
+    }
+  }
   public async addAttendees(id: string, attendees: AddSingleAttendeeDto[]) {
     const event = await this.eventRepository.findOne({ where: { id: id } });
     if (event !== null) {
@@ -27,8 +72,6 @@ class EventService {
     }
   }
 
-  public eventRepository = dataSource.getRepository(Event);
-
   public async getEvents() {
     return await this.eventRepository.find();
   }
@@ -46,7 +89,7 @@ class EventService {
       throw new UnauthorizedError("Cannot find event manager.");
     }
 
-    return this.eventRepository.find({
+    return await this.eventRepository.find({
       where: { eventManager: authenticatedUser, isArchived: true },
       relations: ["eventManager"],
       select: ["id", "name", "time"]
@@ -59,7 +102,7 @@ class EventService {
       throw new UnauthorizedError("Cannot find event manager.");
     }
 
-    return this.eventRepository.find({
+    return await this.eventRepository.find({
       where: { eventManager: authenticatedUser, isArchived: false },
       relations: ["eventManager"],
       select: ["id", "name", "time"]
@@ -75,7 +118,7 @@ class EventService {
     if (authenticatedUser === null) {
       throw new UnauthorizedError("Cannot find event manager.");
     }
-    return this.eventRepository.find({
+    return await this.eventRepository.find({
       where: { eventManager: authenticatedUser },
       relations: ["eventManager"],
       select: ["id", "name", "time", "isArchived",]
@@ -153,7 +196,7 @@ class EventService {
     const event = await this.eventRepository.findOne({ where: { id: id } });
     if (event !== null) {
       event.attendees = [];
-      return this.eventRepository.save(event);
+      return await this.eventRepository.save(event);
     }
     else {
       throw new BadRequestError("Event not found");
