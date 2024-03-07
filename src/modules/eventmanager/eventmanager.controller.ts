@@ -8,11 +8,16 @@ import {
   Param,
   Patch,
   Post,
+  UseBefore,
 } from "routing-controllers";
 import { CreateEventManagerDto } from "./dto/create-eventmanager.dto";
 import { UpdateEventManagerDto } from "./dto/update-eventmanager.dto";
+import { CheckAutheticated } from "../auth/jwt.middleware";
+import { CheckRole } from "../auth/role.middleware";
+import { ROLES } from "../auth/roles";
 
 @JsonController("/eventmanagers")
+@UseBefore(CheckAutheticated, CheckRole([ROLES.superadmin]))
 export class EventManagerController {
   @Get("/")
   getEventManagers() {

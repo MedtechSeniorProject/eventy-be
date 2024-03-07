@@ -7,14 +7,18 @@ import {
   Param,
   Patch,
   Post,
+  UseBefore,
 } from "routing-controllers";
 import { createDeskAgentDto } from "./dto/create-deskagent.dto";
 import { UpdateDeskAgentDto } from "./dto/update-deskagent.dto";
 import DeskAgentService from "./deskagent.service";
-
+import { CheckAutheticated } from "../auth/jwt.middleware";
+import { CheckRole } from "../auth/role.middleware";
+import { ROLES } from "../auth/roles";
 
 
 @JsonController("/deskagents")
+@UseBefore(CheckAutheticated, CheckRole([ROLES.eventmanager]))
 export class DeskAgentController {
   @Get("/")
   getDeskAgents() {
