@@ -1,16 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Event } from "../event/event.entity";
 
 @Entity()
-export class DeskAgent { 
+export class DeskAgent {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
-  name: string;
+  username: string;
 
-  @Column()
-  email: string;
-
-  @Column()
+  @Column({ select: false })
   password: string;
+
+  @ManyToOne(() => Event, (event) => event.deskAgents, { onDelete: "CASCADE" })
+  event: Event;
 }

@@ -16,13 +16,17 @@ import { CheckAutheticated } from "../auth/jwt.middleware";
 import { CheckRole } from "../auth/role.middleware";
 import { ROLES } from "../auth/roles";
 
-
 @JsonController("/deskagents")
 @UseBefore(CheckAutheticated, CheckRole([ROLES.eventmanager]))
 export class DeskAgentController {
   @Get("/")
   getDeskAgents() {
     return DeskAgentService.getDeskAgent();
+  }
+
+  @Get("/event/:eventId")
+  getDeskAgentsByEventId(@Param("eventId") eventId: string) {
+    return DeskAgentService.getDeskAgentByEventId(eventId);
   }
 
   @Get("/:id")
@@ -36,7 +40,10 @@ export class DeskAgentController {
   }
 
   @Patch("/:id")
-  updateDeskAgent(@Param("id") id: string, @Body() deskAgent: UpdateDeskAgentDto) {
+  updateDeskAgent(
+    @Param("id") id: string,
+    @Body() deskAgent: UpdateDeskAgentDto
+  ) {
     return DeskAgentService.updateDeskAgent(id, deskAgent);
   }
 

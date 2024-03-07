@@ -8,6 +8,8 @@ import { signToken } from "./jwt.util";
 import mailingService from "../mailing/mailing.service";
 import { ValidateDto } from "./dto/validate.dto";
 import { ROLES } from "./roles";
+import { DeskAgentLoginDto } from "./dto/deskagent_login.dto";
+import deskagentService from "../deskagent/deskagent.service";
 
 class AuthService {
   public async login(
@@ -128,6 +130,29 @@ class AuthService {
     ); */
     return {
       message: "Validation code sent to email",
+    };
+  }
+
+  public async deskAgentLogin(loginCredentials: DeskAgentLoginDto) {
+    const deskAgent = await deskagentService.getDeskAgentWithPasswordByUsername(
+      loginCredentials.username
+    );
+    if (!deskAgent) {
+      throw new UnauthorizedError("Invalid username or password");
+    }
+    if (deskAgent.event.isArchived) {
+      throw new UnauthorizedError("Event is over");
+    }
+    const passwordMatch = await bcrypt.compare(
+      loginCredentials.password,
+      deskAgent.password
+    );
+    if (!passwordMatch) {
+      throw new UnauthorizedError("Invalid username or password");
+    }
+    const { password, ...deskAgentWithoutPassword } = deskAgent;
+    return {
+      deskAgent: deskAgentWithoutPassword,
     };
   }
 }

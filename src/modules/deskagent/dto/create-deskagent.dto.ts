@@ -1,16 +1,15 @@
-import { IsNotEmpty, IsString, IsEmail } from "class-validator";
+import { IsNotEmpty, IsString, IsUUID } from "class-validator";
 
 export class createDeskAgentDto {
   @IsNotEmpty()
   @IsString()
-  readonly name: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsEmail()
-  readonly email: string;
+  readonly username: string;
 
   @IsNotEmpty()
   @IsString()
   readonly password: string;
+
+  @IsNotEmpty()
+  @IsUUID()
+  readonly eventId: string;
 }
