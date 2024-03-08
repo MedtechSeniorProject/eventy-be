@@ -57,6 +57,7 @@ class SuperadminService {
     return await this.superadminRepository
       .createQueryBuilder("superadmin")
       .addSelect("superadmin.password")
+      .addSelect("superadmin.validationCode")
       .where("superadmin.email = :email", { email })
       .getOne();
   }

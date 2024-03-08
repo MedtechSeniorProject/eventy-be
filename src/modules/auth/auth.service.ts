@@ -12,22 +12,40 @@ import { DeskAgentLoginDto } from "./dto/deskagent_login.dto";
 import deskagentService from "../deskagent/deskagent.service";
 
 class AuthService {
-  public async login(
-    loginCredentials: LoginDto,
-    ipAddress: string,
-    userAgent: string
-  ) {
+  public async login(loginCredentials: LoginDto) {
+    // check if superadmin exists
     const superadmin = await superadminService.getSuperAdminWithPasswordByEmail(
       loginCredentials.email
     );
-    if (!superadmin) {
-      const eventmanager =
-        await eventmanagerService.getEventManagerWithPasswordByEmail(
-          loginCredentials.email
-        );
-      if (!eventmanager) {
+    if (superadmin) {
+      const passwordMatch = await bcrypt.compare(
+        loginCredentials.password,
+        superadmin.password
+      );
+      if (!passwordMatch) {
         throw new UnauthorizedError("Invalid email or password");
       }
+      // if valid, create a random validation code and email it to user
+      // const validationCode = Math.random().toString(36).substring(2, 15);
+      const validationCode = "123456";
+      await superadminService.updateSuperAdmin(superadmin.id, {
+        validationCode,
+      });
+      /*mailingService.sendMail(
+        eventmanager.email,
+        "Eventy - Login Validation code",
+        `Hi ! <br> Here's your validation code ! <br> Code : <h1>${validationCode}</h1> <br> Please submit this code in the next 5 minutes. <br> <br> Eventy No-reply`
+      );*/
+      return {
+        message: "Validation code sent to email",
+      };
+    }
+    // check if event manager exists
+    const eventmanager =
+      await eventmanagerService.getEventManagerWithPasswordByEmail(
+        loginCredentials.email
+      );
+    if (eventmanager) {
       const passwordMatch = await bcrypt.compare(
         loginCredentials.password,
         eventmanager.password
@@ -51,28 +69,8 @@ class AuthService {
         message: "Validation code sent to email",
       };
     }
-    const passwordMatch = await bcrypt.compare(
-      loginCredentials.password,
-      superadmin.password
-    );
-    if (!passwordMatch) {
-      throw new UnauthorizedError("Invalid email or password");
-    }
-    const sessionKey = await sessionService.createSession(
-      superadmin.id,
-      ipAddress,
-      userAgent
-    );
-    const accessToken = signToken({
-      sessionKey,
-      userId: superadmin.id,
-      role: ROLES.superadmin,
-    });
-    const { password, ...superadminWithoutPassword } = superadmin;
-    return {
-      accessToken,
-      superadmin: superadminWithoutPassword,
-    };
+    // if nothing found
+    throw new UnauthorizedError("Invalid email or password");
   }
 
   public async validateLogin(
@@ -81,31 +79,63 @@ class AuthService {
     userAgent: string
   ) {
     const { email, validationCode } = validateDto;
-    const eventManager = await eventmanagerService.getEventManagerByEmail(
+    // check if superadmin exists
+    const superadmin = await superadminService.getSuperAdminWithPasswordByEmail(
       email
     );
-    if (!eventManager) {
-      throw new UnauthorizedError("Invalid code");
+    if (superadmin) {
+      if (superadmin.validationCode !== validationCode) {
+        throw new UnauthorizedError("Invalid code");
+      }
+      const updatedSuperAdmin = await superadminService.updateSuperAdmin(
+        superadmin.id,
+        {
+          validationCode: "",
+        }
+      );
+      const sessionKey = await sessionService.createSession(
+        superadmin.id,
+        ipAddress,
+        userAgent
+      );
+      const accessToken = signToken({
+        sessionKey,
+        userId: superadmin.id,
+        role: ROLES.superadmin,
+      });
+      return {
+        accessToken,
+        superadmin: updatedSuperAdmin,
+      };
     }
-    if (eventManager.validationCode !== validationCode) {
-      throw new UnauthorizedError("Invalid code");
+    const eventManager =
+      await eventmanagerService.getEventManagerWithPasswordByEmail(email);
+    if (eventManager) {
+      if (eventManager.validationCode !== validationCode) {
+        throw new UnauthorizedError("Invalid code");
+      }
+      const updatedEventManager = await eventmanagerService.updateEventManager(
+        eventManager.id,
+        {
+          validationCode: "",
+        }
+      );
+      const sessionKey = await sessionService.createSession(
+        eventManager.id,
+        ipAddress,
+        userAgent
+      );
+      const accessToken = signToken({
+        sessionKey,
+        userId: eventManager.id,
+        role: ROLES.eventmanager,
+      });
+      return {
+        accessToken,
+        eventManager: updatedEventManager,
+      };
     }
-    eventManager.validationCode = "";
-    await eventmanagerService.updateEventManager(eventManager.id, eventManager);
-    const sessionKey = await sessionService.createSession(
-      eventManager.id,
-      ipAddress,
-      userAgent
-    );
-    const accessToken = signToken({
-      sessionKey,
-      userId: eventManager.id,
-      role: ROLES.eventmanager,
-    });
-    return {
-      accessToken,
-      eventManager,
-    };
+    throw new UnauthorizedError("Invalid code");
   }
 
   public async extendSession(sessionKey: string) {

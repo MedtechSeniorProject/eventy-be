@@ -15,4 +15,7 @@ export class Superadmin {
 
   @Column({ select: false })
   password: string;
+
+  @Column({ select: false, nullable: true, default: "" })
+  validationCode: string;
 }

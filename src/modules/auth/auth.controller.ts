@@ -16,11 +16,8 @@ import { DeskAgentLoginDto } from "./dto/deskagent_login.dto";
 @JsonController("/auth")
 export class AuthController {
   @Post("/login")
-  login(@Body() loginCredentials: LoginDto, @Req() request: any) {
-    const ipAddress =
-      request.headers["x-forwarded-for"] || request.connection.remoteAddress;
-    const userAgent = request.headers["user-agent"];
-    return authService.login(loginCredentials, ipAddress, userAgent);
+  login(@Body() loginCredentials: LoginDto) {
+    return authService.login(loginCredentials);
   }
 
   @Post("/validate")

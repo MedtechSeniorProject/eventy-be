@@ -18,10 +18,10 @@ export class EventManager {
   @Column({
     default: "",
     nullable: true,
+    select: false,
   })
   validationCode: string;
 
   @OneToMany(() => Event, (event) => event.eventManager)
   events: Event[];
-  
 }
