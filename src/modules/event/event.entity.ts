@@ -1,6 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
 import { EventManager } from "../eventmanager/eventmanager.entity";
 import { Attendee } from "./Attendee";
+import { DeskAgent } from "../deskagent/deskagent.entity";
 
 @Entity()
 export class Event {
@@ -13,14 +20,14 @@ export class Event {
   @Column({
     type: "timestamptz",
   })
-  time: Date; 
+  time: Date;
 
   @Column({
     nullable: false,
-    default: false
+    default: false,
   })
   isArchived: boolean;
-  
+
   @Column({
     type: "jsonb",
     default: [],
@@ -29,4 +36,7 @@ export class Event {
 
   @ManyToOne(() => EventManager, (eventManager) => eventManager.events)
   eventManager: EventManager;
+
+  @OneToMany(() => DeskAgent, (deskAgent) => deskAgent.event)
+  deskAgents: DeskAgent[];
 }

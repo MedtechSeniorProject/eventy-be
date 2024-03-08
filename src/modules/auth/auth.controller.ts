@@ -11,6 +11,7 @@ import authService from "./auth.service";
 import { ValidateDto } from "./dto/validate.dto";
 import { ExtendDto } from "./dto/extend.dto";
 import { ResendDto } from "./dto/resend.dto";
+import { DeskAgentLoginDto } from "./dto/deskagent_login.dto";
 
 @JsonController("/auth")
 export class AuthController {
@@ -38,5 +39,10 @@ export class AuthController {
   @Post("/extend")
   extendSession(@Body() extendDto: ExtendDto) {
     return authService.extendSession(extendDto.sessionKey);
+  }
+
+  @Post("/deskAgentLogin")
+  deskAgentLogin(@Body() loginCredentials: DeskAgentLoginDto) {
+    return authService.deskAgentLogin(loginCredentials);
   }
 }
