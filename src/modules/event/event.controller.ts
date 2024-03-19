@@ -63,7 +63,7 @@ export class EventController {
     }
 
     // @UseBefore(CheckRole([ROLES.deskagent]))
-    @Patch("/attendee/:eventId/:attendeeId") //Will be used by desk agent to change hasAttended to true
+    @Patch("/attendee/:eventId/") //Will be used by desk agent to change hasAttended to true
     //TODO: remove eventId from params and use it directly from the payload
     checkInAttendee(
         @Param("eventId") eventId: string,
@@ -93,7 +93,6 @@ export class EventController {
         //TODO: remove eventId from params and use it directly from the payload when deskagent entity is updated
         return EventService.addAttendee(eventId, attendee);
     }
-
 
     @Post("/delete/:eventId/") //POST instead of DELETE because it is prefereable to use POST for delete requests with body
     deleteAttendees(@Param("eventId") eventId: string, @Body() attendeeIds: string[]) {
