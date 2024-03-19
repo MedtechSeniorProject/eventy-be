@@ -15,7 +15,7 @@ class EventService {
 
   //Fetch address from coordinates
   public async fetchAddressFromCoordinates(latitude: number, longitude: number) {
-    const url = `https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}&api_key=${process.env.GEOCODE_API_KEY}`;
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
     try {
       const response = await axios.get(url);
       const address = response.data.display_name;
