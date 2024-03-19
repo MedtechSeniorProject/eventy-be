@@ -110,9 +110,4 @@ export class EventController {
         return EventService.deleteEvent(id);
     }
 
-    @Delete("/deleteAll") //For testing purposes
-    deleteAllEvents() {
-        return EventService.deleteAllEvents();
-    }
-
 }

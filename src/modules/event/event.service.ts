@@ -261,9 +261,6 @@ class EventService {
     }
   }
 
-  public async deleteAllEvents() {
-    return await this.eventRepository.clear();
-  }
 }
 
 export default new EventService() as EventService;
