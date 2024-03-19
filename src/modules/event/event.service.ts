@@ -115,7 +115,10 @@ class EventService {
           }
         }
         else {
-          throw new BadRequestError("Attendee already checked in");
+          if (!attendee.phoneNumber){
+            attendee.phoneNumber = "00000000"
+          }
+          throw new BadRequestError(`Attendee has already been checked in. Attendee ID: ${attendeeId.attendeeId}, Attendee Name: ${attendee.name}, Attendee Email: ${attendee.email}, Attendee Phone Number: ${attendee.phoneNumber}`);
         }
       }
       else {
