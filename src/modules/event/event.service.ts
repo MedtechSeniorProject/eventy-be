@@ -6,13 +6,29 @@ import { Event } from "./event.entity";
 import { AddSingleAttendeeDto } from "./dto/add-single-attendee.dto";
 import { Attendee } from "./Attendee";
 import { UpdateEventDto } from "./dto/update-event.dto";
+import { CheckInAttendeeDto } from "./dto/checkin-attendee.dto";
+import axios from "axios";
+
 class EventService {
+  
   public eventRepository = dataSource.getRepository(Event);
 
-  public async checkInAttendee(eventId: string, attendeeId: string) {
+  //Fetch address from coordinates
+  public async fetchAddressFromCoordinates(latitude: number, longitude: number) {
+    const url = `https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}&api_key=${process.env.GEOCODE_API_KEY}`;
+    try {
+      const response = await axios.get(url);
+      const address = response.data.address;
+      return address;
+    } catch (error) {
+      throw new Error("Failed to fetch address from coordinates.");
+    }
+  }
+
+  public async checkInAttendee(eventId: string, attendeeId: CheckInAttendeeDto) {
     const event = await this.eventRepository.findOne({ where: { id: eventId } });
     if (event !== null) {
-      const attendee = event.attendees.find(attendee => attendee.id === attendeeId);
+      const attendee = event.attendees.find(attendee => attendee.id === attendeeId.attendeeId);
       if (attendee !== undefined) {
         if (attendee.hasAttended === false) {
           attendee.hasAttended = true;
@@ -52,6 +68,7 @@ class EventService {
       throw new BadRequestError("Event not found");
     }
   }
+  
   public async addAttendees(id: string, attendees: AddSingleAttendeeDto[]) {
     const event = await this.eventRepository.findOne({ where: { id: id } });
     if (event !== null) {
@@ -79,7 +96,7 @@ class EventService {
   public async getEventsWithEventManagers() {
     return await this.eventRepository.find({
       relations: ["eventManager"],
-      select: ["id", "name", "time", "isArchived"]
+      select: ["id", "name", "description", "startTime", "endTime", "isArchived"]
     });
   }
 
@@ -92,7 +109,7 @@ class EventService {
     return await this.eventRepository.find({
       where: { eventManager: authenticatedUser, isArchived: true },
       relations: ["eventManager"],
-      select: ["id", "name", "time"]
+      select: ["id", "name", "description", "startTime", "endTime", "isArchived"]
     });
   }
 
@@ -105,12 +122,16 @@ class EventService {
     return await this.eventRepository.find({
       where: { eventManager: authenticatedUser, isArchived: false },
       relations: ["eventManager"],
-      select: ["id", "name", "time"]
+      select: ["id", "name", "description", "startTime", "endTime", "isArchived"]
     });
   }
 
   public async getEventById(id: string) {
-    return await this.eventRepository.findOne({ where: { id: id } });
+    return await this.eventRepository.findOne({
+      where: { id: id },
+      relations: ["deskAgents"],
+      select: ["id", "name", "description", "startTime", "endTime", "isArchived"]
+    });
   }
 
   public async getMyEvents(userId: string) {
@@ -121,7 +142,7 @@ class EventService {
     return await this.eventRepository.find({
       where: { eventManager: authenticatedUser },
       relations: ["eventManager"],
-      select: ["id", "name", "time", "isArchived",]
+      select: ["id", "name", "description", "startTime", "endTime", "isArchived"]
     });
   }
 
@@ -129,7 +150,15 @@ class EventService {
   public async createEvent(event: CreateEventDto, userId: string) {
     const newEvent = new Event();
     newEvent.name = event.name;
-    newEvent.time = event.time;
+    newEvent.description = event.description;
+    newEvent.startTime = event.startTime;
+    newEvent.endTime = event.endTime;
+    newEvent.latitude = event.latitude;
+    newEvent.longitude = event.longitude;
+    //Fetch address from coordinates
+    const address = await this.fetchAddressFromCoordinates(event.latitude, event.longitude);
+    newEvent.address = address;
+
     let eventCreator = await eventmanagerService.getEventManagerById(userId);
     if (eventCreator === null) {
       throw new UnauthorizedError("Event Manager not found");
@@ -142,17 +171,35 @@ class EventService {
 
   public async updateEvent(id: string, event: UpdateEventDto) {
     const eventToUpdate = await this.eventRepository.findOne({ where: { id: id } });
+    let isNewAddress: boolean = false;
 
     if (eventToUpdate === null) {
       throw new BadRequestError("Event not found");
     }
-
     if (event.name !== undefined) {
       eventToUpdate.name = event.name;
     }
+    if (event.description !== undefined) {
+      eventToUpdate.description = event.description;
+    }
+    if (event.startTime !== undefined) {
+      eventToUpdate.startTime = event.startTime;
+    }
+    if (event.endTime !== undefined) {
+      eventToUpdate.endTime = event.endTime;
+    }
+    if (event.longitude !== undefined ) {
+      eventToUpdate.longitude = event.longitude;
+      isNewAddress = true;
+    }
+    if (event.latitude !== undefined) {
+      eventToUpdate.latitude = event.latitude;
+      isNewAddress = true;
+    }
 
-    if (event.time !== undefined) {
-      eventToUpdate.time = event.time;
+    if (isNewAddress) {
+      const newAddress = await this.fetchAddressFromCoordinates(eventToUpdate.latitude, eventToUpdate.longitude);
+      eventToUpdate.address = newAddress;
     }
 
     return await this.eventRepository.save(eventToUpdate);
@@ -212,6 +259,10 @@ class EventService {
     else {
       throw new BadRequestError("Event not found");
     }
+  }
+
+  public async deleteAllEvents() {
+    return await this.eventRepository.clear();
   }
 }
 

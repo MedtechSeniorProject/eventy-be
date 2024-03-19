@@ -17,6 +17,7 @@ import { AddSingleAttendeeDto } from "./dto/add-single-attendee.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { CheckRole } from "../auth/role.middleware";
 import { ROLES } from "../auth/roles";
+import { CheckInAttendeeDto } from "./dto/checkin-attendee.dto";
 
 @JsonController("/events")
 @UseBefore(CheckAutheticated)
@@ -63,10 +64,10 @@ export class EventController {
 
     // @UseBefore(CheckRole([ROLES.deskagent]))
     @Patch("/attendee/:eventId/:attendeeId") //Will be used by desk agent to change hasAttended to true
-    //TODO: remove eventId from params and use it directly from the payload when deskagent entity is updated
+    //TODO: remove eventId from params and use it directly from the payload
     checkInAttendee(
         @Param("eventId") eventId: string,
-        @Param("attendeeId") attendeeId: string
+        @Body() attendeeId: CheckInAttendeeDto 
         ) {
         return EventService.checkInAttendee(eventId, attendeeId);
     }
@@ -107,6 +108,11 @@ export class EventController {
     @Delete("/:id")
     deleteEvent(@Param("id") id: string) {
         return EventService.deleteEvent(id);
+    }
+
+    @Delete("/deleteAll") //For testing purposes
+    deleteAllEvents() {
+        return EventService.deleteAllEvents();
     }
 
 }

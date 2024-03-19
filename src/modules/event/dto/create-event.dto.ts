@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsDateString } from "class-validator";
+import { IsNotEmpty, IsString, IsDateString, IsLatitude, IsLongitude } from "class-validator";
 
 export class CreateEventDto {
   @IsNotEmpty()
@@ -6,7 +6,24 @@ export class CreateEventDto {
   readonly name: string;
 
   @IsNotEmpty()
+  @IsString()
+  readonly description: string;
+
+  @IsNotEmpty()
+  @IsLongitude()
+  readonly longitude: number;
+
+  @IsNotEmpty()
+  @IsLatitude()
+  readonly latitude: number;
+
+
+  @IsNotEmpty()
   @IsDateString()
-  readonly time: Date;
+  readonly startTime: Date;
+
+  @IsNotEmpty()
+  @IsDateString()
+  readonly endTime: Date;
 
 }
