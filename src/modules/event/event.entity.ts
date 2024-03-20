@@ -17,10 +17,31 @@ export class Event {
   @Column()
   name: string;
 
+  @Column()
+  description: string;
+
+  @Column({
+    type: "float",
+  })
+  longitude: number;
+
+  @Column({
+    type: "float",
+  })
+  latitude: number;
+
+  @Column()
+  address: string;
+
   @Column({
     type: "timestamptz",
   })
-  time: Date;
+  startTime: Date;
+
+  @Column({
+    type: "timestamptz",
+  })
+  endTime: Date;
 
   @Column({
     nullable: false,
