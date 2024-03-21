@@ -4,7 +4,7 @@ import superadminService from "../superadmin/superadmin.service";
 import eventmanagerService from "../eventmanager/eventmanager.service";
 import sessionService from "../session/session.service";
 import { LoginDto } from "./dto/login.dto";
-import { signToken } from "./jwt.util";
+import { signPermenantToken, signToken } from "./jwt.util";
 import mailingService from "../mailing/mailing.service";
 import { ValidateDto } from "./dto/validate.dto";
 import { ROLES } from "./roles";
@@ -181,8 +181,13 @@ class AuthService {
       throw new UnauthorizedError("Invalid username or password");
     }
     const { password, ...deskAgentWithoutPassword } = deskAgent;
+    const accessToken = signPermenantToken({
+      userId: deskAgent.id,
+      role: ROLES.deskagent,
+    });
     return {
       deskAgent: deskAgentWithoutPassword,
+      accessToken,
     };
   }
 }

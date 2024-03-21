@@ -12,6 +12,14 @@ export function signToken(payload: any) {
   return jwt.sign(payload, secret, { expiresIn });
 }
 
+export function signPermenantToken(payload: any) {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET must be provided");
+  }
+  return jwt.sign(payload, secret);
+}
+
 export function verifyToken(token: string) {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
