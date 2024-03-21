@@ -44,6 +44,16 @@ export class Event {
   endTime: Date;
 
   @Column({
+    nullable: true,
+  })
+  emailTemplate: string;
+
+  @Column({
+    nullable: true,
+  })
+  formTemplate: string;
+
+  @Column({
     nullable: false,
     default: false,
   })
