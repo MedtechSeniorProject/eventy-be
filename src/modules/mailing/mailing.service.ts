@@ -15,7 +15,7 @@ class MailingService {
         },
       },
       {
-        from: process.env.MAIL_FROM,
+        from: process.env.MAILING_FROM + "<" + process.env.MAILING_EMAIL + ">",
       }
     );
   }

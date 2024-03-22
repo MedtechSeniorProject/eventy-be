@@ -31,11 +31,11 @@ class AuthService {
       await superadminService.updateSuperAdmin(superadmin.id, {
         validationCode,
       });
-      /*mailingService.sendMail(
-        eventmanager.email,
+      mailingService.sendMail(
+        superadmin.email,
         "Eventy - Login Validation code",
         `Hi ! <br> Here's your validation code ! <br> Code : <h1>${validationCode}</h1> <br> Please submit this code in the next 5 minutes. <br> <br> Eventy No-reply`
-      );*/
+      );
       return {
         message: "Validation code sent to email",
       };
@@ -60,11 +60,11 @@ class AuthService {
       await eventmanagerService.updateEventManager(eventmanager.id, {
         validationCode: validationCode,
       });
-      /*mailingService.sendMail(
+      mailingService.sendMail(
         eventmanager.email,
         "Eventy - Login Validation code",
         `Hi ! <br> Here's your validation code ! <br> Code : <h1>${validationCode}</h1> <br> Please submit this code in the next 5 minutes. <br> <br> Eventy No-reply`
-      );*/
+      );
       return {
         message: "Validation code sent to email",
       };
@@ -153,11 +153,11 @@ class AuthService {
     const validationCode = "123456";
     eventManager.validationCode = validationCode;
     await eventmanagerService.updateEventManager(eventManager.id, eventManager);
-    /* mailingService.sendMail(
+    mailingService.sendMail(
       eventManager.email,
       "Eventy - Login Validation code",
       `Hi ! <br> Here's your validation code ! <br> Code : <h1>${validationCode}</h1>`
-    ); */
+    );
     return {
       message: "Validation code sent to email",
     };
