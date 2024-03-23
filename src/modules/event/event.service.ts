@@ -88,7 +88,6 @@ class EventService {
     return await this.eventRepository.findOne({
       where: { id: id },
       relations: ["deskAgents", "eventManager"],
-      select: ["id", "name", "description", "address", "startTime", "endTime", "isArchived", "attendees", "eventManager"]
     });
   }
 
