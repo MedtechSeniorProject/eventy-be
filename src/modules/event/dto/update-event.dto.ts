@@ -1,7 +1,8 @@
-import { IsString, IsDateString, IsOptional, IsLongitude, IsLatitude } from "class-validator";
+import { IsString, IsDateString, IsOptional, IsLongitude, IsLatitude, IsNotEmpty } from "class-validator";
 
 export class UpdateEventDto {
   @IsString()
+  @IsNotEmpty()
   @IsOptional()
   readonly name: string;
 
@@ -26,5 +27,11 @@ export class UpdateEventDto {
   @IsDateString()
   readonly endTime: Date;
 
+  @IsString()
+  @IsOptional()
+  readonly emailTemplate: string;
 
+  @IsString()
+  @IsOptional()
+  readonly formTemplate: string;
 }

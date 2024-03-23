@@ -88,7 +88,6 @@ class EventService {
     return await this.eventRepository.findOne({
       where: { id: id },
       relations: ["deskAgents", "eventManager"],
-      select: ["id", "name", "description", "address", "startTime", "endTime", "isArchived", "attendees", "eventManager"]
     });
   }
 
@@ -158,6 +157,14 @@ class EventService {
       isNewAddress = true;
     }
 
+    if (event.emailTemplate !== undefined) {
+      eventToUpdate.emailTemplate = event.emailTemplate;
+    }
+
+    if (event.formTemplate !== undefined) {
+      eventToUpdate.formTemplate = event.formTemplate;
+    }
+    
     if (isNewAddress) {
       const newAddress = await this.fetchAddressFromCoordinates(eventToUpdate.latitude, eventToUpdate.longitude);
       eventToUpdate.address = newAddress;
