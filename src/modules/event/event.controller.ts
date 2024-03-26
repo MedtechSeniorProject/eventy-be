@@ -72,6 +72,11 @@ export class EventController {
         return EventService.checkInAttendee(eventId, attendeeId);
     }
 
+    @Patch("/sendInvites/:id")
+    sendInvites(@Param("id") id: string) {
+        return EventService.sendInvites(id);
+    }
+
     @Patch("/:id")
     updateEvent(@Param("id") id: string, @Body() event: UpdateEventDto) {
         return EventService.updateEvent(id, event);
