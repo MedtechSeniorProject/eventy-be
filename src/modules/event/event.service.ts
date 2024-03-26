@@ -360,7 +360,7 @@ class EventService {
     // Send invites to attendees
     event.attendees.forEach((attendee) => {
       // generate qr code
-      QRCode.toDataURL(attendee.email, function (err, url) {
+      QRCode.toDataURL(attendee.id, function (err, url) {
         //console.log(url);
         // append imnage to email template
         const emailTemplateWithQR =
