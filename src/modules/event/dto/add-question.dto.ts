@@ -3,7 +3,7 @@ import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-vali
 export class AddQuestionDto {
     @IsNotEmpty()
     @IsString()
-    readonly type: string;
+    readonly type: QuestionType;
 
     @IsOptional()
     @IsArray()
@@ -17,3 +17,18 @@ export class AddQuestionDto {
     @IsBoolean()
     readonly isRequired: boolean;    
 }
+
+interface Question {
+    type: QuestionType;
+    options: string[] | null;
+    question: string;
+    isRequired: boolean;
+}
+
+enum QuestionType {
+    Input = "Input",
+    Checkbox = "Checkbox",
+    Radio = "Radio",
+}
+
+export default QuestionType;

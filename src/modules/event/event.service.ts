@@ -10,6 +10,7 @@ import { CheckInAttendeeDto } from "./dto/checkin-attendee.dto";
 import axios from "axios";
 import QRCode from "qrcode";
 import MailingService from "../mailing/mailing.service";
+import { AddQuestionDto } from "./dto/add-question.dto";
 
 class EventService {
   public eventRepository = dataSource.getRepository(Event);
@@ -178,6 +179,19 @@ class EventService {
     }
   }
 
+  public async updateQuestions(eventId: string, questions: AddQuestionDto[]) {
+    const eventToUpdate = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
+
+    if (!eventToUpdate) {
+      throw new BadRequestError("Event not found");
+    }
+
+    eventToUpdate.questions = questions;
+    return await this.eventRepository.save(eventToUpdate);
+  }
+
   public async updateEvent(id: string, event: UpdateEventDto) {
     const eventToUpdate = await this.eventRepository.findOne({
       where: { id: id },
@@ -210,10 +224,6 @@ class EventService {
 
     if (event.emailTemplate !== undefined) {
       eventToUpdate.emailTemplate = event.emailTemplate;
-    }
-
-    if (event.formTemplate !== undefined) {
-      eventToUpdate.formTemplate = event.formTemplate;
     }
 
     if (isNewAddress) {
@@ -353,9 +363,17 @@ class EventService {
     // find {{address}}
     emailTemplate = emailTemplate.replace("{{address}}", event.address);
     // find {{startTime}}
-    emailTemplate = emailTemplate.replace("{{startTime}}", new Date(event.startTime).toLocaleString('en-GB', { timeZoneName: 'short' }));
+    emailTemplate = emailTemplate.replace(
+      "{{startTime}}",
+      new Date(event.startTime).toLocaleString("en-GB", {
+        timeZoneName: "short",
+      })
+    );
     // find {{endTime}}
-    emailTemplate = emailTemplate.replace("{{endTime}}", new Date(event.endTime).toLocaleString('en-GB', { timeZoneName: 'short' }));
+    emailTemplate = emailTemplate.replace(
+      "{{endTime}}",
+      new Date(event.endTime).toLocaleString("en-GB", { timeZoneName: "short" })
+    );
 
     // Send invites to attendees
     event.attendees.forEach((attendee) => {
