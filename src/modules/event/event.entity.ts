@@ -8,7 +8,7 @@ import {
 import { EventManager } from "../eventmanager/eventmanager.entity";
 import { Attendee } from "./Attendee";
 import { DeskAgent } from "../deskagent/deskagent.entity";
-import Question from "./questions/Question";
+import Question from "./Question";
 
 @Entity()
 export class Event {

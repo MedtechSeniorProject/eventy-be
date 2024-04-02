@@ -18,13 +18,6 @@ export class AddQuestionDto {
     readonly isRequired: boolean;    
 }
 
-interface Question {
-    type: QuestionType;
-    options: string[] | null;
-    question: string;
-    isRequired: boolean;
-}
-
 enum QuestionType {
     Input = "Input",
     Checkbox = "Checkbox",
