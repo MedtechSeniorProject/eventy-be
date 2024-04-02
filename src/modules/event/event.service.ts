@@ -12,6 +12,7 @@ import QRCode from "qrcode";
 import MailingService from "../mailing/mailing.service";
 import { AddQuestionDto } from "./dto/add-question.dto";
 import Question from "./Question";
+import { updateResponseDto } from "./dto/update-response.dto";
 
 class EventService {
   public eventRepository = dataSource.getRepository(Event);
@@ -198,6 +199,29 @@ class EventService {
       });
       event.questions = newQuestions;
       return this.eventRepository.save(event);
+    } else {
+      throw new BadRequestError("Event not found");
+    }
+  }
+
+  public async updateResponses(
+    eventId: string,
+    attendeeId: string,
+    responses: updateResponseDto[]
+  ) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
+    if (event !== null) {
+      const attendee = event.attendees.find(
+        (attendee) => attendee.id === attendeeId
+      );
+      if (attendee !== undefined) {
+        attendee.responses = responses;
+        return this.eventRepository.save(event);
+      } else {
+        throw new BadRequestError("Attendee not found");
+      }
     } else {
       throw new BadRequestError("Event not found");
     }

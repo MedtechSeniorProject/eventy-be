@@ -19,6 +19,7 @@ import { CheckRole } from "../auth/role.middleware";
 import { ROLES } from "../auth/roles";
 import { CheckInAttendeeDto } from "./dto/checkin-attendee.dto";
 import { AddQuestionDto } from "./dto/add-question.dto";
+import { updateResponseDto } from "./dto/update-response.dto";
 
 @JsonController("/events")
 @UseBefore(CheckAutheticated)
@@ -120,6 +121,15 @@ export class EventController {
     @Body() questions: AddQuestionDto[]
   ) {
     return EventService.updateQuestions(eventId, questions);
+  }
+
+  @Post("/responses/:eventId/:attendeeId")
+  updateResponses(
+    @Param("eventId") eventId: string,
+    @Param("attendeeId") attendeeId: string,
+    @Body() responses: updateResponseDto[]
+  ) {
+    return EventService.updateResponses(eventId, attendeeId, responses);
   }
 
   @Delete("/deleteAttendeesList/:id") //For testing purposes
