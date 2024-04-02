@@ -2,20 +2,25 @@ import QuestionType from "./QuestionType";
 
 class Question {
   type: QuestionType;
-  options: string[];
   question: string;
   isRequired: boolean;
+  options: string[] | null;
 
   constructor(
     type: QuestionType,
-    options: string[],
     question: string,
-    isRequired: boolean
+    isRequired: boolean,
+    options?: string[],
   ) {
     this.type = type;
-    this.options = options;
     this.question = question;
     this.isRequired = isRequired;
+    if (options){
+      this.options = options;
+    }
+    else {
+      this.options = null;
+    }
   }
 }
 
