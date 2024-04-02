@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class AddQuestionDto {
     @IsNotEmpty()
@@ -15,7 +15,11 @@ export class AddQuestionDto {
 
     @IsNotEmpty()
     @IsBoolean()
-    readonly isRequired: boolean;    
+    readonly isRequired: boolean;
+
+    @IsOptional()
+    @IsUUID()
+    readonly id: string;
 }
 
 enum QuestionType {

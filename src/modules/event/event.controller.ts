@@ -78,14 +78,6 @@ export class EventController {
     return EventService.sendInvites(id);
   }
 
-  @Patch("/questions/:eventId")
-  updateQuestions(
-    @Param("eventId") eventId: string,
-    @Body() questions: AddQuestionDto[]
-  ) {
-    return EventService.updateQuestions(eventId, questions);
-  }
-
   @Patch("/:id")
   updateEvent(@Param("id") id: string, @Body() event: UpdateEventDto) {
     return EventService.updateEvent(id, event);
@@ -120,6 +112,14 @@ export class EventController {
     @Body() attendeeIds: string[]
   ) {
     return EventService.deleteAttendees(eventId, attendeeIds);
+  }
+
+  @Post("/questions/:eventId")
+  updateQuestions(
+    @Param("eventId") eventId: string,
+    @Body() questions: AddQuestionDto[]
+  ) {
+    return EventService.updateQuestions(eventId, questions);
   }
 
   @Delete("/deleteAttendeesList/:id") //For testing purposes

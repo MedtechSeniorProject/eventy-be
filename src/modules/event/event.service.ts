@@ -11,6 +11,7 @@ import axios from "axios";
 import QRCode from "qrcode";
 import MailingService from "../mailing/mailing.service";
 import { AddQuestionDto } from "./dto/add-question.dto";
+import Question from "./Question";
 
 class EventService {
   public eventRepository = dataSource.getRepository(Event);
@@ -180,16 +181,26 @@ class EventService {
   }
 
   public async updateQuestions(eventId: string, questions: AddQuestionDto[]) {
-    const eventToUpdate = await this.eventRepository.findOne({
+    const event = await this.eventRepository.findOne({
       where: { id: eventId },
     });
-
-    if (!eventToUpdate) {
+    const newQuestions: Question[] = [];
+    if (event !== null) {
+      questions.forEach((question) => {
+        const newQuestion = new Question(
+          question.id,
+          question.type,
+          question.question,
+          question.isRequired,
+          question.options
+        );
+        newQuestions.push(newQuestion);
+      });
+      event.questions = newQuestions;
+      return this.eventRepository.save(event);
+    } else {
       throw new BadRequestError("Event not found");
     }
-
-    eventToUpdate.questions = questions;
-    return await this.eventRepository.save(eventToUpdate);
   }
 
   public async updateEvent(id: string, event: UpdateEventDto) {
