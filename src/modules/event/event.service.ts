@@ -10,6 +10,9 @@ import { CheckInAttendeeDto } from "./dto/checkin-attendee.dto";
 import axios from "axios";
 import QRCode from "qrcode";
 import MailingService from "../mailing/mailing.service";
+import { AddQuestionDto } from "./dto/add-question.dto";
+import Question from "./Question";
+import { updateResponseDto } from "./dto/update-response.dto";
 
 class EventService {
   public eventRepository = dataSource.getRepository(Event);
@@ -178,6 +181,52 @@ class EventService {
     }
   }
 
+  public async updateQuestions(eventId: string, questions: AddQuestionDto[]) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
+    const newQuestions: Question[] = [];
+    if (event !== null) {
+      questions.forEach((question) => {
+        const newQuestion = new Question(
+          question.id,
+          question.type,
+          question.question,
+          question.isRequired,
+          question.options
+        );
+        newQuestions.push(newQuestion);
+      });
+      event.questions = newQuestions;
+      return this.eventRepository.save(event);
+    } else {
+      throw new BadRequestError("Event not found");
+    }
+  }
+
+  public async updateResponses(
+    eventId: string,
+    attendeeId: string,
+    responses: updateResponseDto[]
+  ) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
+    if (event !== null) {
+      const attendee = event.attendees.find(
+        (attendee) => attendee.id === attendeeId
+      );
+      if (attendee !== undefined) {
+        attendee.responses = responses;
+        return this.eventRepository.save(event);
+      } else {
+        throw new BadRequestError("Attendee not found");
+      }
+    } else {
+      throw new BadRequestError("Event not found");
+    }
+  }
+
   public async updateEvent(id: string, event: UpdateEventDto) {
     const eventToUpdate = await this.eventRepository.findOne({
       where: { id: id },
@@ -210,10 +259,6 @@ class EventService {
 
     if (event.emailTemplate !== undefined) {
       eventToUpdate.emailTemplate = event.emailTemplate;
-    }
-
-    if (event.formTemplate !== undefined) {
-      eventToUpdate.formTemplate = event.formTemplate;
     }
 
     if (isNewAddress) {
@@ -353,9 +398,17 @@ class EventService {
     // find {{address}}
     emailTemplate = emailTemplate.replace("{{address}}", event.address);
     // find {{startTime}}
-    emailTemplate = emailTemplate.replace("{{startTime}}", new Date(event.startTime).toLocaleString('en-GB', { timeZoneName: 'short' }));
+    emailTemplate = emailTemplate.replace(
+      "{{startTime}}",
+      new Date(event.startTime).toLocaleString("en-GB", {
+        timeZoneName: "short",
+      })
+    );
     // find {{endTime}}
-    emailTemplate = emailTemplate.replace("{{endTime}}", new Date(event.endTime).toLocaleString('en-GB', { timeZoneName: 'short' }));
+    emailTemplate = emailTemplate.replace(
+      "{{endTime}}",
+      new Date(event.endTime).toLocaleString("en-GB", { timeZoneName: "short" })
+    );
 
     // Send invites to attendees
     event.attendees.forEach((attendee) => {

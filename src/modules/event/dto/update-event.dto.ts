@@ -30,8 +30,4 @@ export class UpdateEventDto {
   @IsString()
   @IsOptional()
   readonly emailTemplate: string;
-
-  @IsString()
-  @IsOptional()
-  readonly formTemplate: string;
 }
