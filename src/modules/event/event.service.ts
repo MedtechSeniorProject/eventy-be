@@ -157,10 +157,10 @@ class EventService {
           throw new BadRequestError("Attendee has not attended the event");
         }
       } else {
-        throw new BadRequestError("Attendee not found");
+        throw new BadRequestError("Event or Attendee not found");
       }
     } else {
-      throw new BadRequestError("Event not found");
+      throw new BadRequestError("Event or Attendee not found");
     }
   }
 
