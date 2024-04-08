@@ -138,7 +138,6 @@ export class EventController {
     return EventService.updateQuestions(eventId, questions);
   }
 
-  @UseBefore(CheckAutheticated)
   @Post("/responses/:eventId/:attendeeId")
   updateResponses(
     @Param("eventId") eventId: string,

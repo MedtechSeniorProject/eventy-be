@@ -137,31 +137,27 @@ class EventService {
       select: ["questions", "attendees"],
     });
 
-    if (event !== null) {
-      //Check if attendee exists:
-      const attendee = event.attendees.find(
-        (attendee) => attendee.id === attendeeId
-      );
-      if (attendee !== undefined) {
-        //Check if attendee has attended the event
-        if (attendee.hasAttended) {
-          //Check if attendee has already answered the questions
-          if ((attendee.responses) && (attendee.responses.length > 0)) {
-            throw new BadRequestError(
-              "Attendee has already answered the questions"
-            );
-          } else {
-            return event.questions;
-          }
-        } else {
-          throw new BadRequestError("Attendee has not attended the event");
-        }
-      } else {
-        throw new BadRequestError("Event or Attendee not found");
-      }
-    } else {
-      throw new BadRequestError("Event or Attendee not found");
+    if (event == null) {
+      throw new BadRequestError("Event or attendee not found");
     }
+
+    const attendee = event.attendees.find(
+      (attendee) => attendee.id === attendeeId
+    );
+
+    if (attendee == null) {
+      throw new BadRequestError("Event or attendee not found");
+    }
+
+    if (!attendee.hasAttended) {
+      throw new BadRequestError("Attendee has not attended the event");
+    }
+
+    if (attendee.responses && attendee.responses.length > 0) {
+      throw new BadRequestError("Attendee has already answered the questions");
+    }
+
+    return event.questions;
   }
 
   public async getEventById(id: string) {
@@ -245,19 +241,25 @@ class EventService {
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
     });
-    if (event !== null) {
-      const attendee = event.attendees.find(
-        (attendee) => attendee.id === attendeeId
-      );
-      if (attendee !== undefined) {
-        attendee.responses = responses;
-        return this.eventRepository.save(event);
-      } else {
-        throw new BadRequestError("Attendee not found");
-      }
-    } else {
+
+    if (event == null) {
       throw new BadRequestError("Event not found");
     }
+
+    const attendee = event.attendees.find(
+      (attendee) => attendee.id === attendeeId
+    );
+
+    if (attendee == null) {
+      throw new BadRequestError("Attendee not found");
+    }
+
+    if (attendee.responses && attendee.responses.length > 0) {
+      throw new BadRequestError("Attendee has already answered the questions");
+    }
+
+    attendee.responses = responses;
+    return this.eventRepository.save(event);
   }
 
   public async updateEvent(id: string, event: UpdateEventDto) {
