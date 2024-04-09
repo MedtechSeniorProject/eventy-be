@@ -75,9 +75,9 @@ export class EventController {
     return EventService.toggleArchiveEvent(id);
   }
 
-  @UseBefore(CheckAutheticated) // @UseBefore(CheckRole([ROLES.deskagent]))
-  @Patch("/attendee/:eventId/") //Will be used by desk agent to change hasAttended to true
-  //TODO: remove eventId from params and use it directly from the payload
+  @UseBefore(CheckAutheticated) 
+  // @UseBefore(CheckRole([ROLES.deskagent]))
+  @Patch("/attendee/:eventId/")
   checkInAttendee(
     @Param("eventId") eventId: string,
     @Body() attendeeId: CheckInAttendeeDto
