@@ -149,7 +149,7 @@ class EventService {
       throw new BadRequestError("Event or attendee not found");
     }
 
-    if (!attendee.hasAttended) {
+    if (!attendee.checkedInAt) {
       throw new BadRequestError("Attendee has not attended the event");
     }
 
@@ -189,8 +189,8 @@ class EventService {
         (attendee) => attendee.id === attendeeId.attendeeId
       );
       if (attendee !== undefined) {
-        if (attendee.hasAttended === false) {
-          attendee.hasAttended = true;
+        if (attendee.checkedInAt == null) {
+          attendee.checkedInAt = new Date();
           if (await this.eventRepository.save(event)) {
             return attendee;
           }
@@ -345,7 +345,7 @@ class EventService {
           attendee.name,
           attendee.email,
           true,
-          false,
+          null,
           attendee.phoneNumber
         );
         event.attendees.push(newAttendee);
@@ -371,7 +371,7 @@ class EventService {
         attendee.name,
         attendee.email,
         false,
-        true,
+        new Date(),
         attendee.phoneNumber
       );
       event.attendees.push(newAttendee);

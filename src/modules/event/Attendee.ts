@@ -6,13 +6,13 @@ export class Attendee {
   email: string;
   phoneNumber?: string; //optional
   isInvited: boolean;
-  hasAttended: boolean;
+  checkedInAt: Date | null = null;
   responses : any[] = [];
   constructor(
     name: string,
     email: string,
     isInvited: boolean,
-    hasAttended: boolean,
+    checkedInAt: Date | null,
     phoneNumber?: string
   ) {
     this.id = randomUUID();
@@ -22,6 +22,6 @@ export class Attendee {
       this.phoneNumber = phoneNumber;
     }
     this.isInvited = isInvited;
-    this.hasAttended = hasAttended;
+    this.checkedInAt = checkedInAt;
   }
 }
