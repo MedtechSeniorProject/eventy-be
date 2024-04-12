@@ -36,9 +36,9 @@ class DeskAgentService {
     const lastDeskAgent = lastDeskAgentArray[0];
     if (lastDeskAgent) {
       const lastId = parseInt(lastDeskAgent.username.split("-")[1]);
-      if(!isNaN(lastId)) id_num = lastId;
+      if (!isNaN(lastId)) id_num = lastId;
     }
-    const deskAgents = []
+    const deskAgents = [];
     for (let i = 0; i < deskAgentDto.numberOfDeskAgents; i++) {
       id_num++;
       const id = "DA-" + id_num.toString().padStart(5, "0");
@@ -50,7 +50,10 @@ class DeskAgentService {
           password: passwordHash,
           event: event,
         });
-      deskAgents.push({ username:createdDeskAgent.username , password: password });
+      deskAgents.push({
+        username: createdDeskAgent.username,
+        password: password,
+      });
     }
     return deskAgents;
   }
