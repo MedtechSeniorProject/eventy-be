@@ -1,13 +1,11 @@
-import { IsNotEmpty, IsString, IsUUID } from "class-validator";
+import { IsNotEmpty, IsNumber, IsUUID, Max, Min } from "class-validator";
 
 export class createDeskAgentDto {
   @IsNotEmpty()
-  @IsString()
-  readonly username: string;
-
-  @IsNotEmpty()
-  @IsString()
-  readonly password: string;
+  @IsNumber()
+  @Min(1)
+  @Max(8)
+  readonly numberOfDeskAgents: number;
 
   @IsNotEmpty()
   @IsUUID()

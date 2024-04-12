@@ -35,7 +35,7 @@ export class DeskAgentController {
   }
 
   @Post("/")
-  createDeskAgent(@Body() deskAgent: createDeskAgentDto) {
+  createDeskAgents(@Body() deskAgent: createDeskAgentDto) {
     return DeskAgentService.createDeskAgent(deskAgent);
   }
 
