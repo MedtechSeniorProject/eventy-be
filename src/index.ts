@@ -9,6 +9,7 @@ import { DeskAgentController } from "./modules/deskagent/deskagent.controller";
 import { EventManagerController } from "./modules/eventmanager/eventmanager.controller";
 import { Middleware, ExpressMiddlewareInterface } from "routing-controllers";
 import { EventController } from "./modules/event/event.controller";
+import { StatisticsController } from "./modules/statistics/statistics.controller";
 
 @Middleware({ type: "before" })
 export class CorsMiddleware implements ExpressMiddlewareInterface {
@@ -41,6 +42,7 @@ const app = createExpressServer({
     DeskAgentController,
     AuthController,
     EventController,
+    StatisticsController,
   ],
   middlewares: [CorsMiddleware],
 });

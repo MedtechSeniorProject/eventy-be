@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
 } from "typeorm";
 import { EventManager } from "../eventmanager/eventmanager.entity";
 import { Attendee } from "./Attendee";
@@ -14,6 +15,12 @@ import Question from "./Question";
 export class Event {
   @PrimaryGeneratedColumn("uuid")
   id: string;
+
+  @CreateDateColumn({
+    type: "timestamp",
+    default: () => "CURRENT_TIMESTAMP(6)",
+  })
+  createdAt: Date;
 
   @Column()
   name: string;
