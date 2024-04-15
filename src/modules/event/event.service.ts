@@ -13,6 +13,10 @@ import MailingService from "../mailing/mailing.service";
 import { AddQuestionDto } from "./dto/add-question.dto";
 import Question from "./Question";
 import { updateResponseDto } from "./dto/update-response.dto";
+import { defaultFormEmailTemplate } from "../../utils/defaults";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 class EventService {
   public eventRepository = dataSource.getRepository(Event);
@@ -447,12 +451,19 @@ class EventService {
 
     // Send invites to attendees
     event.attendees.forEach((attendee) => {
+      // find {{attendeeName}}
+      let emailTemplateWithAttendeeName = emailTemplate.replace(
+        "{{attendeeName}}",
+        attendee.name
+      );
+
       // generate qr code
       QRCode.toDataURL(attendee.id, function (err, url) {
         //console.log(url);
         // append imnage to email template
         const emailTemplateWithQR =
-          emailTemplate + `<br><img src="${url}" alt="QR Code" />`;
+          emailTemplateWithAttendeeName +
+          `<br><img src="${url}" alt="QR Code" />`;
         // send email to attendee
         MailingService.sendMail(
           attendee.email,
@@ -465,6 +476,56 @@ class EventService {
       //
     });
     return "Invites sent successfully";
+  }
+
+  public async sendEvaluationForm(id: string) {
+    const event = await this.eventRepository.findOne({ where: { id: id } });
+    if (event == null) {
+      throw new BadRequestError("Event not found");
+    }
+    // Prepare Email from template
+    let emailTemplate = defaultFormEmailTemplate;
+    // find {{title}}
+    emailTemplate = emailTemplate.replace("{{title}}", event.name);
+    // find {{description}}
+    emailTemplate = emailTemplate.replace("{{description}}", event.description);
+    // find {{address}}
+    emailTemplate = emailTemplate.replace("{{address}}", event.address);
+    // find {{startTime}}
+    emailTemplate = emailTemplate.replace(
+      "{{startTime}}",
+      new Date(event.startTime).toLocaleString("en-GB", {
+        timeZoneName: "short",
+      })
+    );
+    // find {{endTime}}
+    emailTemplate = emailTemplate.replace(
+      "{{endTime}}",
+      new Date(event.endTime).toLocaleString("en-GB", { timeZoneName: "short" })
+    );
+
+    // Send evaluation for to attendees that checked in
+    event.attendees.forEach((attendee) => {
+      if (attendee.checkedInAt) {
+        // find {{attendeeName}}
+        let emailTemplateWithAttendeeName = emailTemplate.replace(
+          "{{attendeeName}}",
+          attendee.name
+        );
+        // find {{link}}
+        emailTemplateWithAttendeeName = emailTemplateWithAttendeeName.replace(
+          "{{link}}",
+          `${process.env.WEB_URL}/evaluation/${event.id}/${attendee.id}`
+        );
+        // Send email to attendee
+        MailingService.sendMail(
+          attendee.email,
+          event.name + "Feedback Form",
+          emailTemplateWithAttendeeName
+        );
+        console.log(`Sending email to ${attendee.email}`);
+      }
+    });
   }
 }
 

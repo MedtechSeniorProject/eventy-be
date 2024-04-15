@@ -60,7 +60,10 @@ export class EventController {
   }
 
   @Get("/questions/:eventId/:attendeeId")
-  getQuestions(@Param("eventId") eventId: string, @Param("attendeeId") attendeeId: string){
+  getQuestions(
+    @Param("eventId") eventId: string,
+    @Param("attendeeId") attendeeId: string
+  ) {
     return EventService.getQuestions(eventId, attendeeId);
   }
 
@@ -75,7 +78,7 @@ export class EventController {
     return EventService.toggleArchiveEvent(id);
   }
 
-  @UseBefore(CheckAutheticated) 
+  @UseBefore(CheckAutheticated)
   // @UseBefore(CheckRole([ROLES.deskagent]))
   @Patch("/attendee/:eventId/")
   checkInAttendee(
@@ -84,11 +87,19 @@ export class EventController {
   ) {
     return EventService.checkInAttendee(eventId, attendeeId);
   }
+
   @UseBefore(CheckAutheticated)
   @Patch("/sendInvites/:id")
   sendInvites(@Param("id") id: string) {
     return EventService.sendInvites(id);
   }
+
+  @UseBefore(CheckAutheticated)
+  @Patch("/sendEvaluation/:id")
+  sendEvalForm(@Param("id") id: string) {
+    return EventService.sendEvaluationForm(id);
+  }
+
   @UseBefore(CheckAutheticated)
   @Patch("/:id")
   updateEvent(@Param("id") id: string, @Body() event: UpdateEventDto) {

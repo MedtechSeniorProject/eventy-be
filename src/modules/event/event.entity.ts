@@ -9,6 +9,7 @@ import { EventManager } from "../eventmanager/eventmanager.entity";
 import { Attendee } from "./Attendee";
 import { DeskAgent } from "../deskagent/deskagent.entity";
 import Question from "./Question";
+import { defaultEmailInviteTemplate } from "../../utils/defaults";
 
 @Entity()
 export class Event {
@@ -46,6 +47,7 @@ export class Event {
 
   @Column({
     nullable: true,
+    default: defaultEmailInviteTemplate,
   })
   emailTemplate: string;
 
