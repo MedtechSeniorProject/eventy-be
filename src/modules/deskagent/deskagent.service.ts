@@ -22,27 +22,40 @@ class DeskAgentService {
       .getOne();
   }
 
-  public async createDeskAgent(deskAgent: createDeskAgentDto) {
-    const eventId = deskAgent.eventId;
+  public async createDeskAgent(deskAgentDto: createDeskAgentDto) {
+    const eventId = deskAgentDto.eventId;
     const event = await eventService.getEventById(eventId);
     if (!event) {
       throw new NotFoundError("Event not found");
     }
-    const oldDeskAgent = await this.deskAgentRepository.findOne({
-      where: { username: deskAgent.username },
+    let id_num = 0;
+    const lastDeskAgentArray = await this.deskAgentRepository.find({
+      order: { createdAt: "DESC" },
+      take: 1,
     });
-    if (oldDeskAgent) {
-      throw new BadRequestError("Username already taken");
+    const lastDeskAgent = lastDeskAgentArray[0];
+    if (lastDeskAgent) {
+      const lastId = parseInt(lastDeskAgent.username.split("-")[1]);
+      if (!isNaN(lastId)) id_num = lastId;
     }
-    const password = deskAgent.password;
-    const passwordHash = await bcrypt.hash(password, 10);
-    const { password: createdPassword, ...createdDeskAgent } =
-      await this.deskAgentRepository.save({
-        ...deskAgent,
-        password: passwordHash,
-        event: event,
+    const deskAgents = [];
+    for (let i = 0; i < deskAgentDto.numberOfDeskAgents; i++) {
+      id_num++;
+      const id = "DA-" + id_num.toString().padStart(5, "0");
+      const password = Math.random().toString(36).slice(-8);
+      const passwordHash = await bcrypt.hash(password, 10);
+      const { password: createdPassword, ...createdDeskAgent } =
+        await this.deskAgentRepository.save({
+          username: id,
+          password: passwordHash,
+          event: event,
+        });
+      deskAgents.push({
+        username: createdDeskAgent.username,
+        password: password,
       });
-    return createdDeskAgent;
+    }
+    return deskAgents;
   }
 
   public async updateDeskAgent(id: string, deskAgentDto: UpdateDeskAgentDto) {
