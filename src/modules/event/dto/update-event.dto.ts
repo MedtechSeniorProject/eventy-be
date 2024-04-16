@@ -18,6 +18,10 @@ export class UpdateEventDto {
   @IsLatitude()
   readonly latitude: number;
 
+  @IsOptional()
+  @IsString()
+  readonly address: string;
+
 
   @IsOptional()
   @IsDateString()
