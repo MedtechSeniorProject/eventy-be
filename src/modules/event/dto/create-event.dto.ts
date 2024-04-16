@@ -17,6 +17,10 @@ export class CreateEventDto {
   @IsLatitude()
   readonly latitude: number;
 
+  @IsNotEmpty()
+  @IsString()
+  readonly address: string;
+
 
   @IsNotEmpty()
   @IsDateString()

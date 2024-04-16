@@ -93,6 +93,8 @@ class EventService {
         "id",
         "name",
         "description",
+        "longitude",
+        "latitude",
         "address",
         "startTime",
         "endTime",
@@ -115,6 +117,8 @@ class EventService {
         "id",
         "name",
         "description",
+        "longitude",
+        "latitude",
         "address",
         "startTime",
         "endTime",
@@ -270,7 +274,6 @@ class EventService {
     const eventToUpdate = await this.eventRepository.findOne({
       where: { id: id },
     });
-    let isNewAddress: boolean = false;
 
     if (eventToUpdate === null) {
       throw new BadRequestError("Event not found");
@@ -289,23 +292,15 @@ class EventService {
     }
     if (event.longitude !== undefined) {
       eventToUpdate.longitude = event.longitude;
-      isNewAddress = true;
     }
     if (event.latitude !== undefined) {
       eventToUpdate.latitude = event.latitude;
-      isNewAddress = true;
     }
-
+    if (event.address !== undefined) {
+      eventToUpdate.address = event.address;
+    }
     if (event.emailTemplate !== undefined) {
       eventToUpdate.emailTemplate = event.emailTemplate;
-    }
-
-    if (isNewAddress) {
-      const newAddress = await this.fetchAddressFromCoordinates(
-        eventToUpdate.latitude,
-        eventToUpdate.longitude
-      );
-      eventToUpdate.address = newAddress;
     }
 
     return await this.eventRepository.save(eventToUpdate);
@@ -319,12 +314,7 @@ class EventService {
     newEvent.endTime = event.endTime;
     newEvent.latitude = event.latitude;
     newEvent.longitude = event.longitude;
-    //Fetch address from coordinates
-    const address = await this.fetchAddressFromCoordinates(
-      event.latitude,
-      event.longitude
-    );
-    newEvent.address = address;
+    newEvent.address = event.address;
 
     let eventCreator = await eventmanagerService.getEventManagerById(userId);
     if (eventCreator === null) {
