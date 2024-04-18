@@ -15,6 +15,7 @@ import DeskAgentService from "./deskagent.service";
 import { CheckAutheticated } from "../auth/jwt.middleware";
 import { CheckRole } from "../auth/role.middleware";
 import { ROLES } from "../auth/roles";
+import { deleteDeskAgentDto } from "./dto/delete-deskagent.dto";
 
 @JsonController("/deskagents")
 @UseBefore(CheckAutheticated, CheckRole([ROLES.eventmanager]))
@@ -39,6 +40,11 @@ export class DeskAgentController {
     return DeskAgentService.createDeskAgent(deskAgent);
   }
 
+  @Post("/delete")
+  deleteDeskAgents(@Body() deskAgent: deleteDeskAgentDto[]) {
+    return DeskAgentService.deleteDeskAgents(deskAgent);
+  }
+
   @Patch("/:id")
   updateDeskAgent(
     @Param("id") id: string,
@@ -47,8 +53,14 @@ export class DeskAgentController {
     return DeskAgentService.updateDeskAgent(id, deskAgent);
   }
 
+  @Delete("/event/:eventId")
+  deleteDeskAgentByEventId(@Param("eventId") eventId: string) {
+    return DeskAgentService.deleteDeskAgentsByEventId(eventId);
+  }
+
   @Delete("/:id")
   deleteDeskAgent(@Param("id") id: string) {
     return DeskAgentService.deleteDeskAgent(id);
   }
+
 }

@@ -5,6 +5,7 @@ import { DeskAgent } from "./deskagent.entity";
 import { createDeskAgentDto } from "./dto/create-deskagent.dto";
 import { UpdateDeskAgentDto } from "./dto/update-deskagent.dto";
 import * as bcrypt from "bcrypt";
+import { deleteDeskAgentDto } from "./dto/delete-deskagent.dto";
 
 class DeskAgentService {
   public deskAgentRepository = dataSource.getRepository(DeskAgent);
@@ -88,6 +89,11 @@ class DeskAgentService {
     return await this.deskAgentRepository.delete(id);
   }
 
+  public async deleteDeskAgents(deskAgentDtos: deleteDeskAgentDto[]) {
+    const ids = deskAgentDtos.map((deskAgent) => deskAgent.id);
+    return await this.deskAgentRepository.delete(ids);
+  }
+
   public async getDeskAgentById(id: string) {
     return await this.deskAgentRepository.findOne({
       where: { id: id },
@@ -97,6 +103,12 @@ class DeskAgentService {
   public async getDeskAgentByEventId(eventId: string) {
     return await this.deskAgentRepository.find({
       where: { event: { id: eventId } },
+    });
+  }
+
+  public async deleteDeskAgentsByEventId(eventId: string) {
+    return await this.deskAgentRepository.delete({
+      event: { id: eventId },
     });
   }
 }
