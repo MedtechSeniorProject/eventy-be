@@ -47,8 +47,14 @@ export class DeskAgentController {
     return DeskAgentService.updateDeskAgent(id, deskAgent);
   }
 
+  @Delete("/event/:eventId")
+  deleteDeskAgentByEventId(@Param("eventId") eventId: string) {
+    return DeskAgentService.deleteDeskAgentsByEventId(eventId);
+  }
+
   @Delete("/:id")
   deleteDeskAgent(@Param("id") id: string) {
     return DeskAgentService.deleteDeskAgent(id);
   }
+
 }

@@ -99,6 +99,12 @@ class DeskAgentService {
       where: { event: { id: eventId } },
     });
   }
+
+  public async deleteDeskAgentsByEventId(eventId: string) {
+    return await this.deskAgentRepository.delete({
+      event: { id: eventId },
+    });
+  }
 }
 
 export default new DeskAgentService() as DeskAgentService;
