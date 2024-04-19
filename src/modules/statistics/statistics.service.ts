@@ -116,7 +116,11 @@ class StatisticsService {
     const attendedInvitees = invitees.filter(
       (invitee) => invitee.checkedInAt != null
     );
-    return parseFloat(attendedInvitees.length.toFixed(2)) / invitees.length;
+    const attendanceRate = parseFloat(attendedInvitees.length.toFixed(2)) / invitees.length;
+    if (isNaN(attendanceRate)) {
+      return 0;
+    }
+    return attendanceRate;
   }
   getOnSpotAttendees(event: Event) {
     return event.attendees.filter((attendee) => !attendee.isInvited);
@@ -130,6 +134,115 @@ class StatisticsService {
       return attendee.checkedInAt;
     });
     return timeline;
+  }
+
+  async getEvaluationStatistics(eventId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
+    if (!event) {
+      throw new NotFoundError("Event not found");
+    }
+    const responses: any = {};
+    const questions = event.questions;
+    questions.forEach((question) => {
+      if (question.type === "Input") {
+        responses[question.id] = {
+          type: "Input",
+          responses: [],
+        };
+      }
+      if (question.type === "Checkbox" || question.type === "Radio") {
+        responses[question.id] = {
+          type: "Choice",
+          responses: {},
+        };
+        question.options?.forEach((option) => {
+          responses[question.id].responses[option] = 0;
+        });
+      }
+    });
+    event.attendees
+      .filter((attendee) => attendee.responses.length > 0)
+      .forEach((attendee) => {
+        attendee.responses.forEach((response) => {
+          if (responses[response.id].type === "Input") {
+            responses[response.id].responses.push(response.responses[0]);
+          }
+          if (responses[response.id].type === "Choice") {
+            response.responses.forEach((option: any) => {
+              responses[response.id].responses[option] += 1;
+            });
+          }
+        });
+      });
+    return responses;
+  }
+
+  async getSuperAdminStatistics(startingDate: Date, endingDate: Date) {
+    if (new Date(startingDate) > new Date(startingDate))
+      throw new BadRequestError(
+        "Starting date cannot be greater than ending date"
+      );
+
+    const events = await this.eventRepository.find();
+    const filteredEvents = events.filter(
+      (event) =>
+        new Date(event.createdAt) >= new Date(startingDate) &&
+        new Date(event.createdAt) <= new Date(endingDate)
+    );
+
+    const numberOfEvents = events.length;
+    const numberOfAttendees = events.reduce(
+      (acc, event) =>
+        acc +
+        event.attendees.filter((attendee) => attendee.checkedInAt != null)
+          .length,
+      0
+    );
+    const numberOfInvitees = events.reduce(
+      (acc, event) =>
+        acc + event.attendees.filter((attendee) => attendee.isInvited).length,
+      0
+    );
+    const averageAttendanceRate =
+      events.reduce((acc, event) => acc + this.getAttendanceRate(event), 0.0) /
+      events.length;
+    const onSpotAttendees = events.reduce(
+      (acc, event) => acc + this.getOnSpotAttendees(event).length,
+      0
+    );
+    const top3EventsByNumberOfAttendees = events
+      .filter(
+        (event) =>
+          event.attendees.filter((attendee) => attendee.checkedInAt != null)
+            .length > 0
+      )
+      .sort((a, b) => {
+        return (
+          b.attendees.filter((attendee) => attendee.checkedInAt != null)
+            .length -
+          a.attendees.filter((attendee) => attendee.checkedInAt != null).length
+        );
+      })
+      .map((event) => {
+        return {
+          name: event.name,
+          id: event.id,
+          numberOfAttendees: event.attendees.filter(
+            (attendee) => attendee.checkedInAt != null
+          ).length,
+        };
+      });
+
+    return {
+      numberOfEvents,
+      numberOfAttendees,
+      numberOfInvitees,
+      averageAttendanceRate,
+      onSpotAttendees,
+      top3EventsByNumberOfAttendees,
+    };
   }
 }
 
