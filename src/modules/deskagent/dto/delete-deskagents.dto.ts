@@ -1,8 +1,8 @@
-import { IsArray, IsNotEmpty, IsUUID, isNotEmpty } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsUUID } from "class-validator";
 
 export class deleteDeskAgentsDto {
-  @IsNotEmpty()
   @IsArray()
-  @IsUUID()
+  @ArrayNotEmpty()
+  @IsUUID("4", { each: true })
   ids: string[];
 }

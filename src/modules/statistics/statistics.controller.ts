@@ -4,6 +4,7 @@ import {
   Get,
   JsonController,
   Param,
+  Post,
   UseBefore,
 } from "routing-controllers";
 import { CheckAutheticated } from "../auth/jwt.middleware";
@@ -18,7 +19,7 @@ export class StatisticsController {
   public async getEventStatistics(@Param("eventId") eventId: string) {
     return statisticsService.getEventStatistics(eventId);
   }
-  @Get("/eventmanager/:eventManagerId")
+  @Post("/eventmanager/:eventManagerId")
   public async getEventManagerStatistics(
     @Param("eventManagerId") eventManagerId: string,
     @Body() statisticDates: StatisticsDateDto
