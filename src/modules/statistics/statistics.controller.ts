@@ -30,4 +30,19 @@ export class StatisticsController {
       statisticDates.endTime
     );
   }
+
+  @Post("/superadmin")
+  public async getSuperAdminStatistics(
+    @Body() statisticDates: StatisticsDateDto
+  ) {
+    return statisticsService.getSuperAdminStatistics(
+      statisticDates.startTime,
+      statisticDates.endTime
+    );
+  }
+
+  @Get("/eventResponses/:eventId")
+  public async getEventResponses(@Param("eventId") eventId: string) {
+    return statisticsService.getEvaluationStatistics(eventId);
+  }
 }
