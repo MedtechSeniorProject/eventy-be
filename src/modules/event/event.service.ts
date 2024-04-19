@@ -508,14 +508,19 @@ class EventService {
           `${process.env.WEB_URL}/evaluation/${event.id}/${attendee.id}`
         );
         // Send email to attendee
-        MailingService.sendMail(
-          attendee.email,
-          event.name + "Feedback Form",
-          emailTemplateWithAttendeeName
-        );
-        console.log(`Sending email to ${attendee.email}`);
+        try {
+          console.log(`Sending email to ${attendee.email}`);
+          MailingService.sendMail(
+            attendee.email,
+            event.name + " Feedback Form",
+            emailTemplateWithAttendeeName
+          );
+        } catch (error) {
+          console.log(error);
+        }
       }
     });
+    return { message: "Evaluation form sent successfully" };
   }
 }
 
