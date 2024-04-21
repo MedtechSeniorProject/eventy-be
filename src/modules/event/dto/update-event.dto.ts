@@ -4,34 +4,34 @@ export class UpdateEventDto {
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  readonly name: string;
+  readonly name?: string;
 
   @IsString()
   @IsOptional()
-  readonly description: string;
+  readonly description?: string;
 
   @IsOptional()
   @IsLongitude()
-  readonly longitude: number;
+  readonly longitude?: number;
 
   @IsOptional()
   @IsLatitude()
-  readonly latitude: number;
+  readonly latitude?: number;
 
   @IsOptional()
   @IsString()
-  readonly address: string;
+  readonly address?: string;
 
 
   @IsOptional()
   @IsDateString()
-  readonly startTime: Date;
+  readonly startTime?: Date;
 
   @IsOptional()
   @IsDateString()
-  readonly endTime: Date;
+  readonly endTime?: Date;
 
   @IsString()
   @IsOptional()
-  readonly emailTemplate: string;
+  readonly emailTemplate?: string;
 }

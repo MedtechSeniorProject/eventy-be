@@ -7,7 +7,7 @@ export class AddQuestionDto {
 
     @IsOptional()
     @IsArray()
-    readonly options: string[] | null;
+    readonly options?: string[] | null;
 
     @IsNotEmpty()
     @IsString()
