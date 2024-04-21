@@ -18,8 +18,9 @@ import { UpdateEventDto } from "./dto/update-event.dto";
 import { CheckRole } from "../auth/role.middleware";
 import { ROLES } from "../auth/roles";
 import { CheckInAttendeeDto } from "./dto/checkin-attendee.dto";
-import { AddQuestionDto } from "./dto/add-question.dto";
-import { updateResponseDto } from "./dto/update-response.dto";
+import { AddAttendeesDto } from "./dto/add-attendees.dto";
+import { AddQuestionsDto } from "./dto/add-questions.dto";
+import { UpdateResponsesDto } from "./dto/update-responses.dto";
 
 @JsonController("/events")
 export class EventController {
@@ -114,10 +115,7 @@ export class EventController {
 
   @UseBefore(CheckAutheticated)
   @Post("/attendees/:id") //Will be used by event manager
-  addAttendees(
-    @Param("id") id: string,
-    @Body() attendees: AddSingleAttendeeDto[]
-  ) {
+  addAttendees(@Param("id") id: string, @Body() attendees: AddAttendeesDto) {
     return EventService.addAttendees(id, attendees);
   }
 
@@ -144,7 +142,7 @@ export class EventController {
   @Post("/questions/:eventId")
   updateQuestions(
     @Param("eventId") eventId: string,
-    @Body() questions: AddQuestionDto[]
+    @Body() questions: AddQuestionsDto
   ) {
     return EventService.updateQuestions(eventId, questions);
   }
@@ -153,7 +151,7 @@ export class EventController {
   updateResponses(
     @Param("eventId") eventId: string,
     @Param("attendeeId") attendeeId: string,
-    @Body() responses: updateResponseDto[]
+    @Body() responses: UpdateResponsesDto
   ) {
     return EventService.updateResponses(eventId, attendeeId, responses);
   }

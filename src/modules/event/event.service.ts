@@ -10,11 +10,12 @@ import { CheckInAttendeeDto } from "./dto/checkin-attendee.dto";
 import axios from "axios";
 import QRCode from "qrcode";
 import MailingService from "../mailing/mailing.service";
-import { AddQuestionDto } from "./dto/add-question.dto";
 import Question from "./Question";
-import { updateResponseDto } from "./dto/update-response.dto";
 import { defaultFormEmailTemplate } from "../../utils/defaults";
 import dotenv from "dotenv";
+import { AddAttendeesDto } from "./dto/add-attendees.dto";
+import { AddQuestionsDto } from "./dto/add-questions.dto";
+import { UpdateResponsesDto } from "./dto/update-responses.dto";
 
 dotenv.config();
 
@@ -218,7 +219,8 @@ class EventService {
     }
   }
 
-  public async updateQuestions(eventId: string, questions: AddQuestionDto[]) {
+  public async updateQuestions(eventId: string, quests: AddQuestionsDto) {
+    const questions = quests.questions;
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
     });
@@ -244,8 +246,9 @@ class EventService {
   public async updateResponses(
     eventId: string,
     attendeeId: string,
-    responses: updateResponseDto[]
+    resp: UpdateResponsesDto
   ) {
+    const responses = resp.responses;
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
     });
@@ -325,7 +328,8 @@ class EventService {
     return await this.eventRepository.save(newEvent);
   }
 
-  public async addAttendees(id: string, attendees: AddSingleAttendeeDto[]) {
+  public async addAttendees(id: string, atts: AddAttendeesDto) {
+    const attendees = atts.attendees
     const event = await this.eventRepository.findOne({ where: { id: id } });
     if (event !== null) {
       attendees.forEach((attendee) => {
