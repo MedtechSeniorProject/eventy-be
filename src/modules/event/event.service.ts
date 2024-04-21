@@ -219,8 +219,10 @@ class EventService {
     }
   }
 
-  public async updateQuestions(eventId: string, quests: AddQuestionsDto) {
-    const questions = quests.questions;
+  public async updateQuestions(eventId: string, questions: AddQuestionsDto) {
+    if (!Array.isArray(questions)) {
+      throw new BadRequestError("questions must be an array");
+    }
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
     });
@@ -246,9 +248,11 @@ class EventService {
   public async updateResponses(
     eventId: string,
     attendeeId: string,
-    resp: UpdateResponsesDto
+    responses: UpdateResponsesDto
   ) {
-    const responses = resp.responses;
+    if (!Array.isArray(responses)) {
+      throw new BadRequestError("responses must be an array");
+    }
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
     });
@@ -328,10 +332,15 @@ class EventService {
     return await this.eventRepository.save(newEvent);
   }
 
-  public async addAttendees(id: string, atts: AddAttendeesDto) {
-    const attendees = atts.attendees
+  public async addAttendees(id: string, attendees: AddAttendeesDto) {
+    if (!Array.isArray(attendees)) {
+      throw new BadRequestError("Attendees must be an array");
+    }
     const event = await this.eventRepository.findOne({ where: { id: id } });
     if (event !== null) {
+      if (!event.attendees) {
+        event.attendees = []; // Initialize attendees array if it's undefined
+      }
       attendees.forEach((attendee) => {
         const existingAttendee = event.attendees.find(
           (a) => a.email === attendee.email
