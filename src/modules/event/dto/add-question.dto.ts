@@ -19,7 +19,7 @@ export class AddQuestionDto {
 
     @IsOptional()
     @IsUUID()
-    readonly id: string;
+    readonly id?: string;
 }
 
 enum QuestionType {
