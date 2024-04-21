@@ -2,6 +2,7 @@ import { BadRequestError, NotFoundError } from "routing-controllers";
 import { dataSource } from "../../database/database-source";
 import { Event } from "../event/event.entity";
 import { EventManager } from "../eventmanager/eventmanager.entity";
+import axios from "axios";
 
 class StatisticsService {
   private eventRepository = dataSource.getRepository(Event);
@@ -116,7 +117,8 @@ class StatisticsService {
     const attendedInvitees = invitees.filter(
       (invitee) => invitee.checkedInAt != null
     );
-    const attendanceRate = parseFloat(attendedInvitees.length.toFixed(2)) / invitees.length;
+    const attendanceRate =
+      parseFloat(attendedInvitees.length.toFixed(2)) / invitees.length;
     if (isNaN(attendanceRate)) {
       return 0;
     }
@@ -166,6 +168,9 @@ class StatisticsService {
       .filter((attendee) => attendee.responses.length > 0)
       .forEach((attendee) => {
         attendee.responses.forEach((response) => {
+          if (!responses[response.id]) {
+            return;
+          }
           if (responses[response.id].type === "Input") {
             responses[response.id].responses.push(response.responses[0]);
           }
@@ -176,6 +181,18 @@ class StatisticsService {
           }
         });
       });
+    // get sentiments for input responses
+    for (const questionId in responses) {
+      if (responses[questionId].type === "Input") {
+        const responseTexts = responses[questionId];
+        if (process.env.SENTIMENT_API_URL === undefined)
+          throw new Error("Sentiment API URL is not defined");
+        const sentiments = await axios.post(process.env.SENTIMENT_API_URL, {
+          texts: responseTexts.responses,
+        });
+        responses[questionId] = sentiments.data;
+      }
+    }
     return responses;
   }
 
@@ -185,8 +202,8 @@ class StatisticsService {
         "Starting date cannot be greater than ending date"
       );
 
-    const events = await this.eventRepository.find();
-    const filteredEvents = events.filter(
+    const allEvents = await this.eventRepository.find();
+    const events = allEvents.filter(
       (event) =>
         new Date(event.createdAt) >= new Date(startingDate) &&
         new Date(event.createdAt) <= new Date(endingDate)
