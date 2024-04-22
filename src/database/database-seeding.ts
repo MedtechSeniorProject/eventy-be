@@ -6,7 +6,7 @@ import QuestionType from "../modules/event/dto/add-question.dto";
 
 export const seedDatabase = async () => {
   console.log("IS_SEEDER", process.env.IS_SEEDER);
-  if (process.env.IS_SEEDER != "true"){
+  if (process.env.IS_SEEDER != "true") {
     console.log("Not permitted to seed");
     return;
   }
@@ -21,9 +21,8 @@ export const seedDatabase = async () => {
       email: "superadmin@superadmin.com",
       password: "superadmin",
     });
-  }
-  else {
-    return "Database already seeded"
+  } else {
+    return "Database already seeded";
   }
   const defaultEventManager = await eventmanagerService.getEventManagerByEmail(
     "eventmanager@eventmanager.com"
@@ -39,7 +38,8 @@ export const seedDatabase = async () => {
   }
 
   const eventManager = await eventmanagerService.getEventManagerByEmail(
-    "eventmanager@eventmanager.com");
+    "eventmanager@eventmanager.com"
+  );
   const eventManagerId = eventManager!!.id;
 
   const events = await eventService.getEvents();
@@ -91,130 +91,122 @@ export const seedDatabase = async () => {
     const event1Id = events[0].id;
     const event2Id = events[1].id;
     const event3Id = events[2].id;
-    await eventService.addAttendees(event1Id, {
-      attendees: [
-        {
-          name: "Jon Snow",
-          email: "Jon.Snow@NightsWatch.wall",
-          phoneNumber: "12345678",
-        },
-        {
-          name: "Daenerys Targaryen",
-          email: "Dany.targaryen@queen.westeros",
-          phoneNumber: "87654321",
-        },
-        {
-          name: "Tyrion Lannister",
-          email: "TyrionLannis.ter@birds.com",
-          phoneNumber: "12348765",
-        },
-        {
-          name: "Arya Stark",
-          email: "NoOne@FacelessMen.braavos",
-          phoneNumber: "56781234",
-        },
-        {
-          name: "Sansa Stark",
-          email: "Lady.Sansa@Winterfell.north",
-          phoneNumber: "87651234",
-        },
-        {
-          name: "Cersei Lannister",
-          email: "CerseiLioness@ironthrone.king",
-          phoneNumber: "34561278",
-        },
-      ],
-    });
-    await eventService.addAttendees(event2Id, {
-      attendees: [
-        {
-          name: "Rachel Green",
-          email: "Rachel.Green@centralperk.nyc",
-          phoneNumber: "98765432",
-        },
-        {
-          name: "Ross Geller",
-          email: "DrRoss@paleontology.museum",
-          phoneNumber: "23456789",
-        },
-        {
-          name: "Monica Geller",
-          email: "ChefMonica@javaroom.nyc",
-          phoneNumber: "54328976",
-        },
-        {
-          name: "Chandler Bing",
-          email: "ChanandlerBong@transponster.office",
-          phoneNumber: "67891234",
-        },
-        {
-          name: "Joey Tribbiani",
-          email: "JoeyT@soapopera.nyc",
-          phoneNumber: "45678923",
-        },
-        {
-          name: "Phoebe Buffay",
-          email: "PhoebeBuffay@smellycat.nyc",
-          phoneNumber: "89123456",
-        },
-      ],
-    });
-    await eventService.addAttendees(event3Id, {
-      attendees: [
-        {
-          name: "Sheldon Cooper",
-          email: "DrCooper@caltech.physics",
-          phoneNumber: "12345678",
-        },
-        {
-          name: "Leonard Hofstadter",
-          email: "Leonard@caltech.physics",
-          phoneNumber: "87654321",
-        },
-        {
-          name: "Penny",
-          email: "Penny@cheesecake.factory",
-          phoneNumber: "23456789",
-        },
-        {
-          name: "Howard Wolowitz",
-          email: "Howard@NASA.space",
-          phoneNumber: "34567891",
-        },
-        {
-          name: "Rajesh Koothrappali",
-          email: "Raj@astrophysics.lab",
-          phoneNumber: "78912345",
-        },
-        {
-          name: "Amy Farrah Fowler",
-          email: "Amy@neurobiology.lab",
-          phoneNumber: "45678912",
-        },
-      ],
-    });
+    await eventService.addAttendees(event1Id, [
+      {
+        name: "Jon Snow",
+        email: "Jon.Snow@NightsWatch.wall",
+        phoneNumber: "12345678",
+      },
+      {
+        name: "Daenerys Targaryen",
+        email: "Dany.targaryen@queen.westeros",
+        phoneNumber: "87654321",
+      },
+      {
+        name: "Tyrion Lannister",
+        email: "TyrionLannis.ter@birds.com",
+        phoneNumber: "12348765",
+      },
+      {
+        name: "Arya Stark",
+        email: "NoOne@FacelessMen.braavos",
+        phoneNumber: "56781234",
+      },
+      {
+        name: "Sansa Stark",
+        email: "Lady.Sansa@Winterfell.north",
+        phoneNumber: "87651234",
+      },
+      {
+        name: "Cersei Lannister",
+        email: "CerseiLioness@ironthrone.king",
+        phoneNumber: "34561278",
+      },
+    ]);
+    await eventService.addAttendees(event2Id, [
+      {
+        name: "Rachel Green",
+        email: "Rachel.Green@centralperk.nyc",
+        phoneNumber: "98765432",
+      },
+      {
+        name: "Ross Geller",
+        email: "DrRoss@paleontology.museum",
+        phoneNumber: "23456789",
+      },
+      {
+        name: "Monica Geller",
+        email: "ChefMonica@javaroom.nyc",
+        phoneNumber: "54328976",
+      },
+      {
+        name: "Chandler Bing",
+        email: "ChanandlerBong@transponster.office",
+        phoneNumber: "67891234",
+      },
+      {
+        name: "Joey Tribbiani",
+        email: "JoeyT@soapopera.nyc",
+        phoneNumber: "45678923",
+      },
+      {
+        name: "Phoebe Buffay",
+        email: "PhoebeBuffay@smellycat.nyc",
+        phoneNumber: "89123456",
+      },
+    ]);
+    await eventService.addAttendees(event3Id, [
+      {
+        name: "Sheldon Cooper",
+        email: "DrCooper@caltech.physics",
+        phoneNumber: "12345678",
+      },
+      {
+        name: "Leonard Hofstadter",
+        email: "Leonard@caltech.physics",
+        phoneNumber: "87654321",
+      },
+      {
+        name: "Penny",
+        email: "Penny@cheesecake.factory",
+        phoneNumber: "23456789",
+      },
+      {
+        name: "Howard Wolowitz",
+        email: "Howard@NASA.space",
+        phoneNumber: "34567891",
+      },
+      {
+        name: "Rajesh Koothrappali",
+        email: "Raj@astrophysics.lab",
+        phoneNumber: "78912345",
+      },
+      {
+        name: "Amy Farrah Fowler",
+        email: "Amy@neurobiology.lab",
+        phoneNumber: "45678912",
+      },
+    ]);
     console.log("updating questions");
-    await eventService.updateQuestions(event1Id, 
-       [
-        {
-          question:
-            "How would you describe your overall experience at this event?",
-          type: QuestionType.Input,
-          isRequired: true,
-        },
-        {
-          question: "Would you recommend this event to a friend?",
-          type: QuestionType.Radio,
-          options: ["Yes", "No"],
-          isRequired: true,
-        },
-        {
-          question: "Which workshop did you participate in?",
-          type: QuestionType.Checkbox,
-          isRequired: false,
-          options: ["Workshop 1", "Workshop 2", "Workshop 3"],
-        },
-      ],
-    );
+    await eventService.updateQuestions(event1Id, [
+      {
+        question:
+          "How would you describe your overall experience at this event?",
+        type: QuestionType.Input,
+        isRequired: true,
+      },
+      {
+        question: "Would you recommend this event to a friend?",
+        type: QuestionType.Radio,
+        options: ["Yes", "No"],
+        isRequired: true,
+      },
+      {
+        question: "Which workshop did you participate in?",
+        type: QuestionType.Checkbox,
+        isRequired: false,
+        options: ["Workshop 1", "Workshop 2", "Workshop 3"],
+      },
+    ]);
   }
 };
