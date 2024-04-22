@@ -12,6 +12,6 @@ export class AddSingleAttendeeDto {
     @IsOptional()
     @IsNumberString()
     @MinLength(8)
-    readonly phoneNumber: string;
+    readonly phoneNumber?: string;
     
 }
