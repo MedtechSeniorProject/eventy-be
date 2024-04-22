@@ -7,7 +7,7 @@ export class AddQuestionDto {
 
     @IsOptional()
     @IsArray()
-    readonly options: string[] | null;
+    readonly options?: string[] | null;
 
     @IsNotEmpty()
     @IsString()
@@ -19,7 +19,7 @@ export class AddQuestionDto {
 
     @IsOptional()
     @IsUUID()
-    readonly id: string;
+    readonly id?: string;
 }
 
 enum QuestionType {
