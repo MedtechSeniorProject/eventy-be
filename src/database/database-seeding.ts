@@ -2,8 +2,15 @@ import eventService from "../modules/event/event.service";
 import eventmanagerService from "../modules/eventmanager/eventmanager.service";
 import superadminService from "../modules/superadmin/superadmin.service";
 import QuestionType from "../modules/event/dto/add-question.dto";
+import dotenv from "dotenv";
 
 export const seedDatabase = async () => {
+  const superadminPassword = process.env.SUPERADMIN_PASSWORD || "superadmin";
+  const eventManagerPassword = process.env.EVENT_MANAGER_PASSWORD || "eventmanager";
+  const superadminEmail = process.env.SUPERADMIN_EMAIL || "superadmin@superadmin.com";
+  const eventManagerEmail = process.env.EVENT_MANAGER_EMAIL || "eventmanager@eventmanager.com";
+  const superadminName = process.env.SUPERADMIN_NAME || "supeadmin";
+  const eventManagerName = process.env.EVENT_MANAGER_NAME || "eventmanager";
   const responses = {
     0: [
       ["It was good"],
@@ -32,33 +39,33 @@ export const seedDatabase = async () => {
   }
   console.log("Seeding database");
   const defaultAdmin = await superadminService.getSuperAdminByEmail(
-    "superadmin@superadmin.com"
+    superadminEmail
   );
   if (!defaultAdmin) {
     console.log("Creating default superadmin");
     superadminService.createSuperAdmin({
-      name: "superadmin",
-      email: "superadmin@superadmin.com",
-      password: "superadmin",
+      name: superadminName,
+      email: superadminEmail,
+      password: superadminPassword,
     });
   } else {
     return "Database already seeded";
   }
   const defaultEventManager = await eventmanagerService.getEventManagerByEmail(
-    "eventmanager@eventmanager.com"
+    eventManagerEmail
   );
 
   if (!defaultEventManager) {
     console.log("Creating default event manager");
     await eventmanagerService.createEventManager({
-      name: "event manager",
-      email: "eventmanager@eventmanager.com",
-      password: "eventmanager",
+      name: eventManagerName,
+      email: eventManagerEmail,
+      password: eventManagerPassword,
     });
   }
 
   const eventManager = await eventmanagerService.getEventManagerByEmail(
-    "eventmanager@eventmanager.com"
+    eventManagerEmail
   );
   const eventManagerId = eventManager!!.id;
 
@@ -271,70 +278,33 @@ export const seedDatabase = async () => {
     ]);
     console.log("updating questions");
     events = await eventService.getEvents();
-    await eventService.updateQuestions(event1Id, [
-      {
-        question:
-          "How would you describe your overall experience at this event?",
-        type: QuestionType.Input,
-        isRequired: true,
-      },
-      {
-        question: "Would you recommend this event to a friend?",
-        type: QuestionType.Radio,
-        options: ["Yes", "No"],
-        isRequired: true,
-      },
-      {
-        question: "Which workshop did you participate in?",
-        type: QuestionType.Checkbox,
-        isRequired: false,
-        options: ["Workshop 1", "Workshop 2", "Workshop 3"],
-      },
-    ]);
-    await eventService.updateQuestions(event2Id, [
-      {
-        question:
-          "How would you describe your overall experience at this event?",
-        type: QuestionType.Input,
-        isRequired: true,
-      },
-      {
-        question: "Would you recommend this event to a friend?",
-        type: QuestionType.Radio,
-        options: ["Yes", "No"],
-        isRequired: true,
-      },
-      {
-        question: "Which workshop did you participate in?",
-        type: QuestionType.Checkbox,
-        isRequired: false,
-        options: ["Workshop 1", "Workshop 2", "Workshop 3"],
-      },
-    ]);
-    await eventService.updateQuestions(event3Id, [
-      {
-        question:
-          "How would you describe your overall experience at this event?",
-        type: QuestionType.Input,
-        isRequired: true,
-      },
-      {
-        question: "Would you recommend this event to a friend?",
-        type: QuestionType.Radio,
-        options: ["Yes", "No"],
-        isRequired: true,
-      },
-      {
-        question: "Which workshop did you participate in?",
-        type: QuestionType.Checkbox,
-        isRequired: false,
-        options: ["Workshop 1", "Workshop 2", "Workshop 3"],
-      },
-    ]);
+    events.forEach(async function(event) {
+      await eventService.updateQuestions(event.id , [
+        {
+          question:
+            "How would you describe your overall experience at this event?",
+          type: QuestionType.Input,
+          isRequired: true,
+        },
+        {
+          question: "Would you recommend this event to a friend?",
+          type: QuestionType.Radio,
+          options: ["Yes", "No"],
+          isRequired: true,
+        },
+        {
+          question: "Which workshop did you participate in?",
+          type: QuestionType.Checkbox,
+          isRequired: false,
+          options: ["Workshop 1", "Workshop 2", "Workshop 3"],
+        },
+      ]);
+    });
   }
+
   console.log("Updating responses");
-  events.forEach((event) => {
-    event.attendees.forEach(async (attendee) => {
+  events.forEach( async (event) => {
+    await event.attendees.forEach(async (attendee) => {
       await eventService.updateResponses(event.id, attendee.id, [
         {
           id: event.questions[0].id,
@@ -355,13 +325,20 @@ export const seedDatabase = async () => {
     });
   });
   console.log("checking attendees");
-  events.forEach((event) => {
-    event.attendees.forEach(async (attendee) => {
+  console.log("events:");
+  events = await eventService.getEvents();
+  console.log(events);
+  console.log("attendees:"); 
+  console.log(events[0].attendees);
+  for (const event of events) {
+      for (const attendee of event.attendees) {
       const randomTime = Math.floor(Math.random() * (2 * 60 * 60 * 1000 - 60 * 1000) + 60 * 1000); // Generate random time between 1 minute and 2 hours in milliseconds
       const checkInTime = new Date(event.startTime.getTime() + randomTime);
-      await eventService.checkInAttendeeAt(event.id, attendee.id, checkInTime);
-    });
-  });
+      console.log("Checking in", attendee.name, "at", checkInTime);
+      const  x  = await eventService.checkInAttendeeAt(event.id, attendee.id, checkInTime);
+      console.log(x);
+    };
+  };
 
   console.log("Database seeded");
 };
