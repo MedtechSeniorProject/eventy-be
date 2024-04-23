@@ -303,8 +303,8 @@ export const seedDatabase = async () => {
   }
 
   console.log("Updating responses");
-  events.forEach( async (event) => {
-    await event.attendees.forEach(async (attendee) => {
+  for (const event of events) {
+    for (const attendee of event.attendees) {
       await eventService.updateResponses(event.id, attendee.id, [
         {
           id: event.questions[0].id,
@@ -322,8 +322,8 @@ export const seedDatabase = async () => {
             responses[2][Math.floor(Math.random() * responses[2].length)],
         },
       ]);
-    });
-  });
+    }
+  }
   console.log("checking attendees");
   console.log("events:");
   events = await eventService.getEvents();
