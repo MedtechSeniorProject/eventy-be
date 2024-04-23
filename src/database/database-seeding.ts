@@ -302,6 +302,22 @@ export const seedDatabase = async () => {
     });
   }
 
+  console.log("checking attendees");
+  console.log("events:");
+  events = await eventService.getEvents();
+  console.log(events);
+  console.log("attendees:"); 
+  console.log(events[0].attendees);
+  for (const event of events) {
+      for (const attendee of event.attendees) {
+      const randomTime = Math.floor(Math.random() * (2 * 60 * 60 * 1000 - 60 * 1000) + 60 * 1000); // Generate random time between 1 minute and 2 hours in milliseconds
+      const checkInTime = new Date(event.startTime.getTime() + randomTime);
+      console.log("Checking in", attendee.name, "at", checkInTime);
+      const  x  = await eventService.checkInAttendeeAt(event.id, attendee.id, checkInTime);
+      console.log(x);
+    };
+  };
+
   console.log("Updating responses");
   for (const event of events) {
     for (const attendee of event.attendees) {
@@ -324,21 +340,6 @@ export const seedDatabase = async () => {
       ]);
     }
   }
-  console.log("checking attendees");
-  console.log("events:");
-  events = await eventService.getEvents();
-  console.log(events);
-  console.log("attendees:"); 
-  console.log(events[0].attendees);
-  for (const event of events) {
-      for (const attendee of event.attendees) {
-      const randomTime = Math.floor(Math.random() * (2 * 60 * 60 * 1000 - 60 * 1000) + 60 * 1000); // Generate random time between 1 minute and 2 hours in milliseconds
-      const checkInTime = new Date(event.startTime.getTime() + randomTime);
-      console.log("Checking in", attendee.name, "at", checkInTime);
-      const  x  = await eventService.checkInAttendeeAt(event.id, attendee.id, checkInTime);
-      console.log(x);
-    };
-  };
 
   console.log("Database seeded");
 };
