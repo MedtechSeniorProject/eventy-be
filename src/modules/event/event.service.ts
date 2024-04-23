@@ -218,6 +218,41 @@ class EventService {
     }
   }
 
+  public async checkInAttendeeAt(
+    eventId: string,
+    attendeeId: string,
+    checkInTime: Date
+  ){
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
+    if (event !== null) {
+      const attendee = event.attendees.find(
+        (attendee) => attendee.id === attendeeId
+      );
+      if (attendee !== undefined) {
+        if (attendee.checkedInAt == null) {
+          attendee.checkedInAt = checkInTime;
+          if (await this.eventRepository.save(event)) {
+            return attendee;
+          }
+        } else {
+          if (!attendee.phoneNumber) {
+            attendee.phoneNumber = "00000000";
+          }
+          throw new BadRequestError(
+            `Attendee has already been checked in. Attendee ID: ${attendeeId}, Attendee Name: ${attendee.name}, Attendee Email: ${attendee.email}, Attendee Phone Number: ${attendee.phoneNumber}`
+          );
+        }
+      } else {
+        throw new BadRequestError("Attendee not found");
+      }
+    } else {
+      throw new BadRequestError("Event not found");
+    }
+
+  }
+
   public async updateQuestions(eventId: string, questions: AddQuestionDto[]) {
     const event = await this.eventRepository.findOne({
       where: { id: eventId },

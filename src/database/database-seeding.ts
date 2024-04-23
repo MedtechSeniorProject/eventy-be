@@ -1,10 +1,30 @@
-import { log } from "console";
 import eventService from "../modules/event/event.service";
 import eventmanagerService from "../modules/eventmanager/eventmanager.service";
 import superadminService from "../modules/superadmin/superadmin.service";
 import QuestionType from "../modules/event/dto/add-question.dto";
 
 export const seedDatabase = async () => {
+  const responses = {
+    0: [
+      ["It was good"],
+      ["It was bad"],
+      ["I like it"],
+      ["I hate it"],
+      ["It was fun"],
+      ["It was horrible"],
+    ],
+    1: [["Yes"], ["No"]],
+    2: [
+      ["Workshop 1"],
+      ["Workshop 2"],
+      ["Workshop 3"],
+      ["Workshop 1", "Workshop 2"],
+      ["Workshop 1", "Workshop 3"],
+      ["Workshop 2", "Workshop 3"],
+      ["Workshop 1", "Workshop 2", "Workshop 3"],
+    ],
+  };
+
   console.log("IS_SEEDER", process.env.IS_SEEDER);
   if (process.env.IS_SEEDER != "true") {
     console.log("Not permitted to seed");
@@ -42,7 +62,7 @@ export const seedDatabase = async () => {
   );
   const eventManagerId = eventManager!!.id;
 
-  const events = await eventService.getEvents();
+  let events = await eventService.getEvents();
   if (events.length === 0) {
     const oneDay = 24 * 60 * 60 * 1000;
     console.log("Creating default events");
@@ -86,7 +106,7 @@ export const seedDatabase = async () => {
       eventManagerId
     );
     console.log("Adding attendees to events");
-    const events = await eventService.getEvents();
+    let events = await eventService.getEvents();
     console.log(events);
     const event1Id = events[0].id;
     const event2Id = events[1].id;
@@ -122,6 +142,26 @@ export const seedDatabase = async () => {
         email: "CerseiLioness@ironthrone.king",
         phoneNumber: "34561278",
       },
+      {
+        name: "Jaime Lannister",
+        email: "jaimeLannister@kingsguard.king",
+        phoneNumber: "34561278",
+      },
+      {
+        name: "Bran Stark",
+        email: "Bran.Stark@winterfell.north",
+        phoneNumber: "34561278",
+      },
+      {
+        name: "Brienne of Tarth",
+        email: "Brienne@Tarth.west",
+        phoneNumber: "34561278",
+      },
+      {
+        name: "Samwell Tarly",
+        email: "samwell.Tarly@citadelle.maesters",
+        phoneNumber: "34561278",
+      },
     ]);
     await eventService.addAttendees(event2Id, [
       {
@@ -153,6 +193,29 @@ export const seedDatabase = async () => {
         name: "Phoebe Buffay",
         email: "PhoebeBuffay@smellycat.nyc",
         phoneNumber: "89123456",
+      },
+      {
+        name: "Janice",
+        email: "Janice@yemen.omg",
+      },
+      {
+        name: "Gunther",
+        email: "Gunther@centralperk.nl",
+        phoneNumber: "12345678",
+      },
+      {
+        name: "Mike Hannigan",
+        email: "Mike@Hannigan.com",
+        phoneNumber: "87654321",
+      },
+      {
+        name: "David",
+        email: "david@schwimmer.com",
+        phoneNumber: "12348765",
+      },
+      {
+        name: "Ugly Naked Guy",
+        email: "Ugly@naked.guy",
       },
     ]);
     await eventService.addAttendees(event3Id, [
@@ -186,8 +249,28 @@ export const seedDatabase = async () => {
         email: "Amy@neurobiology.lab",
         phoneNumber: "45678912",
       },
+      {
+        name: "Bernadette Rostenkowski",
+        email: "Berny@Pharmaceutical.company",
+        phoneNumber: "98761234",
+      },
+      {
+        name: "Stuart Bloom",
+        email: "Stuart@comicbookstore",
+        phoneNumber: "23456789",
+      },
+      {
+        name: "Emily Sweeney",
+        email: "Emily@Sweeney.com",
+        phoneNumber: "34567891",
+      },
+      {
+        name: "Leslie Winkle",
+        email: "Leslie@Winkle.com",
+      },
     ]);
     console.log("updating questions");
+    events = await eventService.getEvents();
     await eventService.updateQuestions(event1Id, [
       {
         question:
@@ -208,5 +291,77 @@ export const seedDatabase = async () => {
         options: ["Workshop 1", "Workshop 2", "Workshop 3"],
       },
     ]);
+    await eventService.updateQuestions(event2Id, [
+      {
+        question:
+          "How would you describe your overall experience at this event?",
+        type: QuestionType.Input,
+        isRequired: true,
+      },
+      {
+        question: "Would you recommend this event to a friend?",
+        type: QuestionType.Radio,
+        options: ["Yes", "No"],
+        isRequired: true,
+      },
+      {
+        question: "Which workshop did you participate in?",
+        type: QuestionType.Checkbox,
+        isRequired: false,
+        options: ["Workshop 1", "Workshop 2", "Workshop 3"],
+      },
+    ]);
+    await eventService.updateQuestions(event3Id, [
+      {
+        question:
+          "How would you describe your overall experience at this event?",
+        type: QuestionType.Input,
+        isRequired: true,
+      },
+      {
+        question: "Would you recommend this event to a friend?",
+        type: QuestionType.Radio,
+        options: ["Yes", "No"],
+        isRequired: true,
+      },
+      {
+        question: "Which workshop did you participate in?",
+        type: QuestionType.Checkbox,
+        isRequired: false,
+        options: ["Workshop 1", "Workshop 2", "Workshop 3"],
+      },
+    ]);
   }
+  console.log("Updating responses");
+  events.forEach((event) => {
+    event.attendees.forEach(async (attendee) => {
+      await eventService.updateResponses(event.id, attendee.id, [
+        {
+          id: event.questions[0].id,
+          responses:
+            responses[0][Math.floor(Math.random() * responses[0].length)],
+        },
+        {
+          id: event.questions[1].id,
+          responses:
+            responses[1][Math.floor(Math.random() * responses[1].length)],
+        },
+        {
+          id: event.questions[2].id,
+          responses:
+            responses[2][Math.floor(Math.random() * responses[2].length)],
+        },
+      ]);
+    });
+  });
+  console.log("checking attendees");
+  events.forEach((event) => {
+    event.attendees.forEach(async (attendee) => {
+      const randomTime = Math.floor(Math.random() * (2 * 60 * 60 * 1000 - 60 * 1000) + 60 * 1000); // Generate random time between 1 minute and 2 hours in milliseconds
+      const checkInTime = new Date(event.startTime.getTime() + randomTime);
+      await eventService.checkInAttendeeAt(event.id, attendee.id, checkInTime);
+    });
+  });
+
+  console.log("Database seeded");
 };
