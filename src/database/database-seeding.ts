@@ -319,6 +319,7 @@ export const seedDatabase = async () => {
   };
 
   console.log("Updating responses");
+  events = await eventService.getEvents();
   for (const event of events) {
     for (const attendee of event.attendees) {
       await eventService.updateResponses(event.id, attendee.id, [
