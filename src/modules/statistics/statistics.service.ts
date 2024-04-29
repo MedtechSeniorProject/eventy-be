@@ -190,7 +190,7 @@ class StatisticsService {
         const sentiments = await axios.post(process.env.SENTIMENT_API_URL, {
           texts: responseTexts.responses,
         });
-        responses[questionId] = sentiments.data;
+        responses[questionId].responses = sentiments.data;
       }
     }
     return responses;
