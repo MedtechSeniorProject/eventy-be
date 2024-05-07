@@ -37,7 +37,11 @@ export const seedDatabase = async () => {
     console.log("Not permitted to seed");
     return;
   }
-  console.log("Seeding database");
+  //Sleep for 10 seconds before seeding database
+  console.log("Chelling the Database begins in 10 Seconds..."); //You gotta have some fun on the go ;)
+  await new Promise((resolve) => setTimeout(resolve, 10000)); // Sleep for 10 seconds
+
+  console.log("Chelling database");
   const defaultAdmin = await superadminService.getSuperAdminByEmail(
     superadminEmail
   );
@@ -342,5 +346,5 @@ export const seedDatabase = async () => {
     }
   }
 
-  console.log("Database seeded");
+  console.log("Database Chellied successfully!");
 };
