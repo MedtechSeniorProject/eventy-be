@@ -225,8 +225,8 @@ export const seedDatabase = async () => {
         phoneNumber: "12348765",
       },
       {
-        name: "Ugly Naked Guy",
-        email: "Ugly@naked.guy",
+        name: "Ugly Baked Guy",
+        email: "Ugly@Baked.guy",
       },
     ]);
     await eventService.addAttendees(event3Id, [
