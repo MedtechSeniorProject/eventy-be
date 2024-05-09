@@ -10,7 +10,7 @@ import { CheckInAttendeeDto } from "./dto/checkin-attendee.dto";
 import axios from "axios";
 import QRCode from "qrcode";
 import MailingService from "../mailing/mailing.service";
-import { AddQuestionDto } from "./dto/add-question.dto";
+import QuestionType, { AddQuestionDto } from "./dto/add-question.dto";
 import Question from "./Question";
 import { updateResponseDto } from "./dto/update-response.dto";
 import { defaultFormEmailTemplate } from "../../utils/defaults";
@@ -357,6 +357,44 @@ class EventService {
     } else {
       newEvent.eventManager = eventCreator;
     }
+    // Insert default questions
+    const defaultQuestions = [
+      new Question(
+        undefined,
+        QuestionType.Input,
+        "How did you hear about the event?",
+        false
+      ),
+      new Question(
+        undefined,
+        QuestionType.Input,
+        "What did you like about the event?",
+        false
+      ),
+      new Question(
+        undefined,
+        QuestionType.Input,
+        "What did you dislike about the event?",
+        false
+      ),
+      new Question(
+        undefined,
+        QuestionType.Input,
+        "What could be improved in the event?",
+        false
+      ),
+      new Question(
+        undefined,
+        QuestionType.Checkbox,
+        "What is your current status?",
+        false,
+        ["Student", "Professional"]
+      ),
+      new Question(undefined, QuestionType.Input, "Any other comments?", false),
+    ];
+
+    newEvent.questions = defaultQuestions;
+
     return await this.eventRepository.save(newEvent);
   }
 
